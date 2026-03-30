@@ -682,6 +682,13 @@
                 </div>
               </div>
               <div class="setting-item">
+                <div class="setting-label">Tab GID (Sheet ID)</div>
+                <div>
+                  <input type="text" id="settingsTabGid" placeholder="e.g., 0 for Transactions tab" style="width: 100%; padding: 10px 12px; background-color: var(--bg-main); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary);">
+                  <div style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">Find the GID in your sheet URL: docs.google.com/spreadsheets/d/[SHEET_ID]/edit#gid=<strong>[GID]</strong></div>
+                </div>
+              </div>
+              <div class="setting-item">
                 <div class="setting-label">Auto-Sync Interval</div>
                 <div>
                   <select id="settingsSyncInterval" style="padding: 10px 12px; background-color: var(--bg-main); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary);">
@@ -712,6 +719,7 @@
     // ═══════════════════════════════════════════════════════
     const CONFIG = {
       SHEET_ID: '', // Replace with your Sheet ID
+      TAB_GID: '0', // Sheet/Tab ID (0 = first tab, see #gid= in your sheet URL)
       SYNC_INTERVAL: 300000,
       MAX_RETRIES: 3,
       RETRY_DELAY: 2000,
@@ -733,6 +741,7 @@
         Object.assign(CONFIG, JSON.parse(stored));
       }
       document.getElementById('settingsSheetId').value = CONFIG.SHEET_ID || '';
+      document.getElementById('settingsTabGid').value = CONFIG.TAB_GID || '0';
       document.getElementById('settingsSyncInterval').value = CONFIG.SYNC_INTERVAL;
     }
 
@@ -744,7 +753,7 @@
         throw new Error('Sheet ID not configured. Please set it in Settings.');
       }
 
-      const csvUrl = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv`;
+      const csvUrl = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=${CONFIG.TAB_GID || '0'}`;
       const response = await fetch(csvUrl);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return response.text();
@@ -1537,6 +1546,7 @@
     // ═══════════════════════════════════════════════════════
     function saveSettings() {
       CONFIG.SHEET_ID = document.getElementById('settingsSheetId').value;
+      CONFIG.TAB_GID = document.getElementById('settingsTabGid').value || '0';
       CONFIG.SYNC_INTERVAL = parseInt(document.getElementById('settingsSyncInterval').value);
       localStorage.setItem('treasury-config', JSON.stringify(CONFIG));
       alert('Settings saved. Syncing...');
