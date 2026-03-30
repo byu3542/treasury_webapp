@@ -1,148 +1,309 @@
-# treasury_webapp
-treasury webapp
-🎯 What We're Building
-A Treasury Management Dashboard that integrates with a single Google Sheet (your transactions data), giving you:
+# Treasury Management Dashboard
 
-Real-time Cash Visibility — Account balances, cash flow position
-Smart Categorization — Automatic category assignments + manual override
-Forecasting — 13-week rolling forecast based on historical patterns
-Reconciliation Workflow — Mark transactions as reconciled
-Analytics & Risk Flags — Unusual transaction detection, category trends
-Multi-Account Support — Wells Fargo, other institutions
-Google Sheets Sync — Read/write directly to your published sheet
+A production-ready treasury management web app that syncs with Google Sheets, providing real-time cash visibility, transaction management, and financial analytics.
 
+## Features
 
-📋 Here's Your Claude Code Prompt
-Copy this verbatim into Claude Code. It follows best practices:Treasury Management Web App - Claude Code PromptTreasury Management Web App - Claude Code PromptNow let me present this as your coaching guide:Orchestrated comprehensive coaching synthesis integrating research findingsOrchestrated comprehensive coaching synthesis integrating research findings
-🎓 Coaching Summary: Treasury Management Best Practices
-Now let me coach you through what I found on G2 and how to apply it to your web app:
-What the Best Treasury Software Does (2025)
-Modern treasury management systems consolidate cash positions across entities, automate bank connectivity, and integrate with ERP and financial systems to provide a unified view of treasury operations HighRadius. The key priorities that emerged from the research:
+✅ **Real-time Cash Position** — Account balances, inflow/outflow summary
+✅ **Transaction Management** — Virtual-scrolled table for 1000+ rows, full-text search, filters
+✅ **Reconciliation Workflow** — Mark transactions as cleared/pending with audit trail
+✅ **Financial Analytics** — Monthly cash flow, category trends, top outflows, reconciliation rate
+✅ **Google Sheets Integration** — OAuth2 sync, read-only API v4, offline-capable
+✅ **IndexedDB Storage** — No localStorage quota limits, handles 964+ transaction rows
+✅ **Dark Mode Design** — Professional B2B finance UX with gold/teal accents
+✅ **Responsive Layout** — Mobile, tablet, desktop support
 
-Real-time Cash Visibility — 74% of treasurers say real-time cash visibility is their top priority, yet most still struggle with fragmented data across banks, ERPs, and legacy treasury systems HighRadius
-Forecasting & Liquidity Planning — Not just historical reporting, but predictive (what's coming next 13 weeks?)
-Reconciliation Workflow — Reduce manual errors by automating match-ups
-Smart Categorization — Context-aware category assignment (you have 18 transaction categories already)
-Risk Detection — Flag anomalies: large transactions, aged pending items, revenue shortfalls
-Multi-Account Support — Multiple banks, multiple currencies (future)
+## Architecture
 
-Why Your Transactions Sheet Is Perfect
-Your data already has the bones of enterprise treasury:
+```
+┌─────────────────────────────────────────────────────────┐
+│                      React 18 App (Vite)                │
+├─────────────────────────────────────────────────────────┤
+│  Components:                                            │
+│  • Layout / Sidebar / Header (navigation)              │
+│  • Dashboard (KPI cards, charts, cash position)        │
+│  • TransactionTable (virtual-scrolled, 60 FPS)         │
+│  • Analytics (monthly flows, category trends)          │
+│  • Settings (OAuth2 config, cache management)          │
+├─────────────────────────────────────────────────────────┤
+│  Hooks:                                                 │
+│  • useAuth — Google OAuth2 + token lifecycle           │
+│  • useTransactions — Sync from Sheets, cache to IDB    │
+│  • useFilters — In-memory search/filter (< 500ms)      │
+├─────────────────────────────────────────────────────────┤
+│  Services:                                              │
+│  • auth.js — Google Identity Services (GIS) client     │
+│  • sheets.js — Google Sheets API v4 (OAuth Bearer)     │
+│  • db.js — IndexedDB schema & operations               │
+├─────────────────────────────────────────────────────────┤
+│  Storage:                                               │
+│  • IndexedDB — transactions, metadata, reconciliation   │
+│  • sessionStorage — access token (cleared on tab close) │
+│  • No localStorage — avoids quota exceeded errors       │
+├─────────────────────────────────────────────────────────┤
+│  Google Sheets API v4                                   │
+│  └─ OAuth2 implicit flow → Bearer token in fetch()     │
+└─────────────────────────────────────────────────────────┘
+```
 
-✅ Rich descriptions (you can mine for patterns)
-✅ Categories already assigned (learn from them)
-✅ Multiple accounts (Business Checking, future: Treasury Account, JPM)
-✅ Dates, amounts, IDs for reconciliation
-✅ Metadata fields for future enhancement
+## Quick Start
 
-Three Tiers of Treasury Software (Pick Your Level)
-TierToolsBest ForYour PathStartup/SMBAgicap, TreasuryView, Pile<$5K/mo, simple cash forecasting👈 You start here (this prompt)Mid-MarketTesorio, Trovata, Kyriba$5-50K/mo, multi-entity, FX riskUpgrade to Phase 2 (write-back to Sheets)EnterpriseGTreasury, Coupa, Oracle$100K+/mo, 1000+ entities, complex riskNot needed unless you scale globally
-You're building a "best-of-breed SMB" tool — focused and fast, not bloated.
-UI Patterns I Saw in Agicap, Tesorio, Kyriba (Applied to Your Prompt)
-✅ KPI cards at the top — Cash position first thing (not hidden in a chart)
-✅ Real-time sparklines — Status of last 12 weeks at a glance
-✅ Transaction table with inline actions — Click to reconcile, re-categorize, bulk export
-✅ Forecast chart with risk zones — Green (safe) vs Red (deficit) zones
-✅ Category breakdown — Pie + table, drill-down by category
-✅ Alert banner — "3 txns pending reconciliation for >30 days"
-✅ Dark mode by default — B2B software standard (finance teams use this at night)
-All of these are in the prompt I wrote for you.
+### 1. Clone & Install
 
-🚀 How to Use This Prompt (Best Practices for Claude Code)
-Step 1: Publish Your Google Sheet
-Go to your Google Sheet
-→ File → Share → Publish to web
-→ Select "Entire document" and "CSV"
-→ Copy the Sheet ID (between /d/ and /edit in URL)
-Step 2: Paste the Prompt Into Claude Code
+```bash
+git clone <repo>
+cd treasury_webapp
+npm install
+```
 
-Open Claude Code (or just say "create a new app using this prompt")
-Paste the entire TREASURY_APP_PROMPT.md file
-Replace YOUR_SHEET_ID_HERE with your actual ID
-Ask Claude to build it
+### 2. Google Cloud Setup (One-Time)
 
-Step 3: Ask for Specific Features
-Once the MVP is built, you can ask Claude Code for:
+1. Go to [console.cloud.google.com](https://console.cloud.google.com)
+2. Create a project → Enable **Google Sheets API**
+3. Go to **APIs & Services → Credentials**
+4. Create **OAuth 2.0 Client ID** (Web application)
+5. Add your domain to **Authorized JavaScript origins**:
+   - `http://localhost:5173` (dev)
+   - `https://yourdomain.com` (production)
+6. Copy the **Client ID** (ends with `.apps.googleusercontent.com`)
 
-"Add a 26-week forecast view"
-"Add category auto-suggestion based on description patterns"
-"Add an export-to-CSV button for each category"
-"Add a 'what-if' scenario planner for the forecast"
+### 3. Run Development Server
 
-Step 4: Why This Approach Works
-The prompt is designed around best practices for Claude Code:
+```bash
+npm run dev
+```
 
-Explicit Data Model — Tells Claude exactly what the transactions object should look like (no ambiguity)
-Separation of Concerns — Data fetching, computation, rendering are separate functions (easier to debug and extend)
-Real UI/UX Examples — ASCII mockups show exactly what you want, not vague descriptions
-Phased Rollout — MVP → Phase 2 → Phase 3, so you don't ask for everything at once (Claude Code works better with focused requests)
-Error Handling Built In — Tells Claude about CORS, parse errors, timeouts upfront
-Testing Instructions — You'll know if the integration works before full build
+Open http://localhost:5173, go to **Settings**, and enter:
+- **Google OAuth2 Client ID** (from step 2.6)
+- **Google Spreadsheet ID** (from your sheet URL)
+- **Sheet Tab Name** (default: `Sheet1`)
 
+Click **Sign in** and approve the OAuth popup.
 
-💡 Key Insight: You Don't Need a Backend
-Most CFOs think they need:
+### 4. Build & Deploy
 
-A database (Postgres)
-A backend API (Django, Node)
-User authentication (Auth0)
-Webhooks to sync Google Sheets
+```bash
+npm run build
+```
 
-You don't. Here's why:
-✅ Google Sheets IS your database — Published CSV is your API
-✅ Client-side logic is fast — 1000 transactions compute in <50ms in browser
-✅ Everyone has Google Sheets access already — No new login to manage
-✅ localStorage for temporary state — Reconciliation, filters, sort order
-✅ Future upgrade path — When you need write-back, add Google Sheets API (still no traditional backend)
-This is how Pile, Agicap, and TreasuryView started — simple sheet, smart frontend.
+Deploy the `dist/` folder to GitHub Pages, Vercel, Netlify, or any static host.
 
-📊 What You'll Have After This Build
-Week 1 (MVP)
+**GitHub Pages (automatic via GitHub Actions):**
+- Push to `main` → CI builds & deploys to `gh-pages` branch automatically
 
-Dashboard with real-time cash position + 4 KPI cards
-Transactions table with sort, filter, search
-Basic 13-week forecast (moving average)
-3 risk alert rules
-Manual refresh button
+## Expected Google Sheet Format
 
-Week 2 (Polish)
+Your sheet should have these columns (in order):
 
-Analytics tab with category trends + weekly breakdown
-Reconciliation checkboxes (localStorage-backed)
-Category filter with counts
-Last sync timestamp + auto-refresh every 5 min
-Mobile responsive layout
+| M-Y | Date | Description | Category | Amount | Account | Account # | Institution | Month | Week | Transaction ID | Account ID | Check Number | Full Description | Metadata | Date Added | Reconcile Date | Categorized Date |
+|-----|------|-------------|----------|--------|---------|-----------|-------------|-------|------|----------------|------------|--------------|------------------|----------|------------|----------------|------------------|
 
-Week 3+ (Expansion)
+- **Date**: Parsed as ISO date for sorting
+- **Amount**: Numeric (positive = inflow, negative = outflow)
+- **Category**: Used for filtering & analytics
+- **Account**: Cash position grouped by account
+- **Transaction ID**: Unique identifier (generated if missing)
 
-Export transactions to CSV
-Scenario planning ("what if outflows drop 10%?")
-Category auto-tagging (regex rules)
-Multi-year trend analysis
-Email digest of weekly forecast
+## Performance Targets
 
+✅ Load 1000 rows: < 2 seconds
+✅ Search 1000 rows: < 500ms (in-memory filter)
+✅ Scroll performance: 60 FPS (react-window virtual scrolling)
+✅ Filter by category: Instant (cached aggregates)
+✅ Sync 1000 rows: ~5s (chunked at 200 rows/request)
 
-🎯 One Final Coaching Tip
-The hardest part isn't the code — it's the data transform.
-When you get the CSV from Google Sheets, it'll look like:
-M-Y,Date,Description,Category,Amount,Account,Account #,Institution,Month,Week,...
-=CONCATENATE(...),2026-03-27,"B. Jackson Const Payments...",CAPEX,-83.99,"Business Checking",...
-That first column is a formula, not a computed value. When you parse it as CSV, you get "=CONCATENATE(MONTH(B2),\"-\",YEAR(B2))" as a string.
-You'll need to handle this. The prompt tells Claude to:
+## Key Libraries
 
-Compute M-Y from the Date column instead of parsing the formula
-Skip rows where Date is empty (Excel loves empty rows at the end)
-Convert Amount to a number (it might be a string in CSV)
-Handle null values (Reconcile Date will be blank for pending txns)
+| Package | Purpose | Why |
+|---------|---------|-----|
+| **React 18** | UI framework | Modern, stable, great ecosystem |
+| **Vite** | Build tool | Fast dev server, optimized bundles |
+| **@tanstack/react-query** | Data fetching | Caching, auto-retry, background sync |
+| **idb** | IndexedDB wrapper | Cleaner API than raw IDB, < 1KB gzipped |
+| **react-window** | Virtual scrolling | 60 FPS scroll for 1000+ rows |
+| **date-fns** | Date utilities | Lightweight date parsing/formatting |
+| **Tailwind CSS** | Styling | Dark mode, design tokens, responsive |
 
-Claude will figure this out, but be ready to tweak the parser if your sheet has quirks.
+## Storage Strategy
 
-🏁 Next Steps
+### IndexedDB Schema
 
-✅ Read the prompt (TREASURY_APP_PROMPT.md — saved in outputs)
-✅ Publish your Google Sheet as CSV (File → Share → Publish to web)
-✅ Grab your Sheet ID from the URL
-✅ Open Claude Code and paste the prompt
-✅ Replace YOUR_SHEET_ID_HERE with your actual ID
-✅ Test the CSV fetch using the browser console command in section 9
-✅ Ask Claude to build it — "Build this treasury management dashboard. Start with fetching the CSV from Google Sheets and parsing it, then render the dashboard tab."
+```javascript
+// transactions: stores parsed transactions
+{
+  id: string (Transaction ID or composite key)
+  date: string (ISO date)
+  description: string
+  category: string
+  amount: number
+  account: string
+  accountNumber: string
+  institution: string
+  month: string
+  week: string
+  accountId: string
+  checkNumber: string
+  fullDescription: string
+  metadata: string
+  dateAdded: string
+  dateISO: string (for indexing)
+  // ... other fields
+}
+
+// metadata: stores config & sync state
+{
+  key: string
+  value: any
+}
+// Keys: 'clientId', 'spreadsheetId', 'sheetName', 'lastSync', 'rowCount'
+
+// reconciliation: stores per-transaction reconcile state
+{
+  id: string (Transaction ID)
+  status: 'cleared' | 'pending' | 'unreconciled'
+  date: string (ISO timestamp when marked)
+}
+```
+
+### Token Management
+
+- **Access Token**: Stored in `sessionStorage` (cleared when tab/window closes)
+- **Refresh**: Google Identity Services handles token refresh automatically
+- **Expiry**: Tokens auto-expire after ~1 hour; refresh is transparent
+
+## Google OAuth2 Flow
+
+1. User clicks "Sign in with Google" in the app
+2. Google Identity Services opens a consent popup
+3. User approves read-only access to spreadsheets
+4. Access token returned → stored in `sessionStorage`
+5. All subsequent API calls use `Authorization: Bearer {token}` header
+6. Token expires → GIS refreshes automatically on next request
+
+## Sync & Caching
+
+### Initial Load
+1. Check IndexedDB for cached transactions
+2. If empty or stale (>5 min), fetch from Sheets API
+3. Parse CSV, transform rows, store in IndexedDB
+4. Merge with reconciliation state, render UI
+
+### Auto-Sync
+- Fetches every 5 minutes (configurable in Settings)
+- Checks only if a valid token exists
+- Falls back to IndexedDB on network errors
+
+### Incremental Updates
+- Fetches all rows on each sync (no differential sync yet)
+- Could optimize to only fetch rows changed since `lastSync` timestamp
+
+## Development
+
+### Project Structure
+
+```
+src/
+├── main.jsx              # React app entry point
+├── App.jsx               # Root component, DB init
+├── components/           # React components
+│   ├── Layout.jsx        # Sidebar, header, nav
+│   ├── Dashboard.jsx     # KPI cards, cash by account, charts
+│   ├── TransactionTable.jsx  # Virtual scrolling table
+│   ├── Analytics.jsx     # Monthly flow, category trends
+│   └── Settings.jsx      # OAuth2 config, cache mgmt
+├── hooks/                # Custom React hooks
+│   ├── useAuth.js        # Auth state & token lifecycle
+│   ├── useTransactions.js    # Data fetching & caching
+│   └── useFilters.js     # In-memory filtering
+├── services/             # Business logic
+│   ├── auth.js           # Google Identity Services
+│   ├── sheets.js         # Google Sheets API v4
+│   └── db.js             # IndexedDB operations
+└── styles/
+    └── index.css         # Global styles, Tailwind + custom
+```
+
+### Adding a New Feature
+
+Example: Add a "Budget vs Actual" chart
+
+1. **Add hook** (`src/hooks/useBudget.js`):
+   ```javascript
+   export function useBudget(transactions) {
+     // compute budget vs actual from transactions
+     return { budgetVsActual, variance }
+   }
+   ```
+
+2. **Add component** (`src/components/BudgetChart.jsx`):
+   ```javascript
+   export default function BudgetChart() {
+     const { budgetVsActual } = useBudget(transactions)
+     return <div>{/* render chart */}</div>
+   }
+   ```
+
+3. **Import in Dashboard.jsx** and render
+
+## Troubleshooting
+
+### "QUOTA_EXCEEDED" Error
+The app now uses IndexedDB instead of localStorage, so this shouldn't happen. If you see it:
+- Clear the IndexedDB cache (Settings → Clear Cache)
+- Check your browser's storage quota: DevTools → Application → Storage
+
+### "AUTH_EXPIRED"
+Token expired. Click "Sign in" again. GIS should refresh automatically, but explicit re-auth clears it.
+
+### "PERMISSION_DENIED"
+Your OAuth2 Client ID doesn't have Sheets API enabled. Go back to Google Cloud Console:
+1. Select your project
+2. Enable Google Sheets API
+3. Confirm your Authorized JavaScript origins include your domain
+
+### Transactions Not Loading
+1. Verify Spreadsheet ID is correct (try pasting the full URL)
+2. Make sure the sheet tab name matches (e.g., "Sheet1", not "Transactions")
+3. Check that your Google Sheet is published or shared appropriately
+4. Open DevTools → Network tab, check Sheets API responses for errors
+
+## Performance Tips
+
+- **Use IndexedDB**: No localStorage size limits
+- **Virtual scrolling**: Table auto-renders only visible rows (20–30 at a time)
+- **In-memory filtering**: All filters run in JS, < 500ms for 1000 rows
+- **Chunked Sheets API fetches**: Pulls 200 rows per request, not all at once
+- **React Query caching**: Data fetched once, re-renders use cached data
+
+## Deployment
+
+### GitHub Pages (Automatic)
+
+The workflow `.github/workflows/jekyll-gh-pages.yml` automatically:
+1. Installs dependencies
+2. Runs `npm run build`
+3. Uploads `dist/` to GitHub Pages
+
+Just push to `main` and the app deploys.
+
+### Vercel / Netlify
+
+1. Connect your repo
+2. Set build command: `npm run build`
+3. Set publish directory: `dist`
+4. Deploy
+
+### Self-Hosted
+
+```bash
+npm run build
+# Upload dist/ folder to your web server (Apache, Nginx, etc.)
+```
+
+## License
+
+MIT
+
+## Support
+
+For issues, questions, or feature requests, open a GitHub issue or contact the maintainers.
