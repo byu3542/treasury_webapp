@@ -678,14 +678,14 @@
                 <div class="setting-label">Sheet ID</div>
                 <div>
                   <input type="text" id="settingsSheetId" style="width: 100%; padding: 10px 12px; background-color: var(--bg-main); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary);">
-                  <div style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">Update the Sheet ID and click "Save" to refresh data.</div>
+                  <div style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">From your Google Sheet URL: <code style="background-color: var(--bg-main); padding: 2px 4px;">docs.google.com/spreadsheets/d/<strong>[SHEET_ID]</strong>/edit#gid=...</code><br>The sheet must be "Anyone with the link can view" or public.</div>
                 </div>
               </div>
               <div class="setting-item">
-                <div class="setting-label">Tab GID (Sheet ID)</div>
+                <div class="setting-label">Tab GID (for Transactions tab)</div>
                 <div>
-                  <input type="text" id="settingsTabGid" placeholder="e.g., 0 for Transactions tab" style="width: 100%; padding: 10px 12px; background-color: var(--bg-main); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary);">
-                  <div style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">Find the GID in your sheet URL: docs.google.com/spreadsheets/d/[SHEET_ID]/edit#gid=<strong>[GID]</strong></div>
+                  <input type="text" id="settingsTabGid" placeholder="e.g., 0 or 123456789" style="width: 100%; padding: 10px 12px; background-color: var(--bg-main); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary);">
+                  <div style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;"><strong>Steps:</strong><br>1. Open your Google Sheet<br>2. Click on the "Transactions" tab at the bottom<br>3. Copy the number from the URL after <code>#gid=</code><br>4. Paste it here (or leave blank for first tab = 0)</div>
                 </div>
               </div>
               <div class="setting-item">
@@ -753,9 +753,18 @@
         throw new Error('Sheet ID not configured. Please set it in Settings.');
       }
 
-      const csvUrl = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=${CONFIG.TAB_GID || '0'}`;
-      const response = await fetch(csvUrl);
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      // Try with gid parameter first
+      let csvUrl = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=${CONFIG.TAB_GID || '0'}`;
+      let response = await fetch(csvUrl);
+
+      // If gid parameter fails, try without it (exports first sheet)
+      if (!response.ok && CONFIG.TAB_GID !== '0') {
+        console.warn('gid parameter failed, trying without it');
+        csvUrl = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv`;
+        response = await fetch(csvUrl);
+      }
+
+      if (!response.ok) throw new Error(`HTTP ${response.status} - Check Sheet ID and ensure sheet is publicly accessible`);
       return response.text();
     }
 
@@ -1475,11 +1484,29 @@
         lastSyncTime = new Date();
         syncRetries = 0;
         localStorage.setItem('treasury-last-sync', lastSyncTime.toISOString());
-        localStorage.setItem('treasury-transactions', JSON.stringify(transactions));
+
+        // Try to cache transactions, but don't fail if quota exceeded (common with 900+ rows)
+        try {
+          localStorage.setItem('treasury-transactions', JSON.stringify(transactions));
+        } catch (quotaErr) {
+          if (quotaErr.name === 'QuotaExceededError') {
+            console.warn('localStorage quota exceeded - data will not be cached', transactions.length, 'rows');
+          } else {
+            throw quotaErr;
+          }
+        }
         updateSyncStatus('success');
         await rerenderActiveTab();
       } catch (err) {
         console.error('Sync error:', err);
+
+        // Don't retry on quota errors - just use in-memory data
+        if (err.name === 'QuotaExceededError') {
+          console.warn('Storage quota exceeded, using in-memory data');
+          updateSyncStatus('success');
+          return;
+        }
+
         syncRetries++;
         if (syncRetries < CONFIG.MAX_RETRIES) {
           updateSyncStatus('error', `Retrying... (${syncRetries}/${CONFIG.MAX_RETRIES})`);
