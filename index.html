@@ -8,8 +8,8 @@
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-  <!-- Chart.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"></script>
+  <!-- Chart.js (UMD for better compatibility) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <!-- PapaParse (with fallback) -->
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -840,6 +840,20 @@
       return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
     }
 
+    // Wait for Chart.js to load (needed for chart rendering)
+    async function waitForChart(maxRetries = 10) {
+      let retries = 0;
+      while (typeof Chart === 'undefined' && retries < maxRetries) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        retries++;
+      }
+      if (typeof Chart === 'undefined') {
+        console.error('Chart.js failed to load after', maxRetries, 'retries');
+        return false;
+      }
+      return true;
+    }
+
     // ═══════════════════════════════════════════════════════
     // DATA COMPUTATIONS
     // ═══════════════════════════════════════════════════════
@@ -997,7 +1011,13 @@
     // ═══════════════════════════════════════════════════════
     // RENDER DASHBOARD
     // ═══════════════════════════════════════════════════════
-    function renderDashboard() {
+    async function renderDashboard() {
+      // Ensure Chart.js is loaded before rendering charts
+      if (!await waitForChart()) {
+        console.error('Cannot render dashboard: Chart.js failed to load');
+        return;
+      }
+
       const position = calculateCashPosition();
       const forecast = forecast13Weeks();
       const risks = detectRiskFlags();
@@ -1070,10 +1090,15 @@
     }
 
     function renderForecastChart(forecast) {
-      const ctx = document.getElementById('forecastChart').getContext('2d');
+      try {
+        if (typeof Chart === 'undefined') {
+          console.warn('Chart.js not available for forecast chart');
+          return;
+        }
+        const ctx = document.getElementById('forecastChart').getContext('2d');
 
-      if (charts.forecast) charts.forecast.destroy();
-      charts.forecast = new Chart(ctx, {
+        if (charts.forecast) charts.forecast.destroy();
+        charts.forecast = new Chart(ctx, {
         type: 'bar',
         data: {
           labels: forecast.map(w => w.week),
@@ -1106,14 +1131,22 @@
           },
         },
       });
+      } catch (err) {
+        console.error('Error rendering forecast chart:', err);
+      }
     }
 
     function renderCategoryChart(categories) {
-      const ctx = document.getElementById('categoryChart').getContext('2d');
-      const colors = ['#1E40AF', '#16A34A', '#DC2626', '#EA580C', '#64748B', '#0EA5E9', '#8B5CF6', '#EC4899'];
+      try {
+        if (typeof Chart === 'undefined') {
+          console.warn('Chart.js not available for category chart');
+          return;
+        }
+        const ctx = document.getElementById('categoryChart').getContext('2d');
+        const colors = ['#1E40AF', '#16A34A', '#DC2626', '#EA580C', '#64748B', '#0EA5E9', '#8B5CF6', '#EC4899'];
 
-      if (charts.category) charts.category.destroy();
-      charts.category = new Chart(ctx, {
+        if (charts.category) charts.category.destroy();
+        charts.category = new Chart(ctx, {
         type: 'doughnut',
         data: {
           labels: categories.map(c => c.category),
@@ -1135,6 +1168,9 @@
           },
         },
       });
+      } catch (err) {
+        console.error('Error rendering category chart:', err);
+      }
     }
 
     // ═══════════════════════════════════════════════════════
@@ -1221,7 +1257,13 @@
     // ═══════════════════════════════════════════════════════
     // RENDER ANALYTICS
     // ═══════════════════════════════════════════════════════
-    function renderAnalytics() {
+    async function renderAnalytics() {
+      // Ensure Chart.js is loaded before rendering charts
+      if (!await waitForChart()) {
+        console.error('Cannot render analytics: Chart.js failed to load');
+        return;
+      }
+
       // Weekly cash flow
       const weeklyData = {};
       transactions.forEach(t => {
@@ -1279,10 +1321,15 @@
     }
 
     function renderWeeklyCashChart(weeks, weeklyData) {
-      const ctx = document.getElementById('weeklyCashChart').getContext('2d');
-      if (charts.weekly) charts.weekly.destroy();
+      try {
+        if (typeof Chart === 'undefined') {
+          console.warn('Chart.js not available for weekly cash chart');
+          return;
+        }
+        const ctx = document.getElementById('weeklyCashChart').getContext('2d');
+        if (charts.weekly) charts.weekly.destroy();
 
-      charts.weekly = new Chart(ctx, {
+        charts.weekly = new Chart(ctx, {
         type: 'bar',
         data: {
           labels: weeks.map(w => `W${w}`),
@@ -1313,11 +1360,19 @@
           plugins: { legend: { labels: { color: 'var(--text-secondary)' } } },
         },
       });
+      } catch (err) {
+        console.error('Error rendering weekly cash chart:', err);
+      }
     }
 
     function renderCategoryTrendsChart(monthlyData) {
-      const ctx = document.getElementById('categoryTrendsChart').getContext('2d');
-      if (charts.trends) charts.trends.destroy();
+      try {
+        if (typeof Chart === 'undefined') {
+          console.warn('Chart.js not available for category trends chart');
+          return;
+        }
+        const ctx = document.getElementById('categoryTrendsChart').getContext('2d');
+        if (charts.trends) charts.trends.destroy();
 
       const months = Object.keys(monthlyData).sort();
       const categories = [...new Set(Object.values(monthlyData).flatMap(m => Object.keys(m)))];
@@ -1346,13 +1401,21 @@
           plugins: { legend: { labels: { color: 'var(--text-secondary)' } } },
         },
       });
+      } catch (err) {
+        console.error('Error rendering category trends chart:', err);
+      }
     }
 
     function renderReconciliationChart(rate) {
-      const ctx = document.getElementById('reconciliationChart').getContext('2d');
-      if (charts.reconciliation) charts.reconciliation.destroy();
+      try {
+        if (typeof Chart === 'undefined') {
+          console.warn('Chart.js not available for reconciliation chart');
+          return;
+        }
+        const ctx = document.getElementById('reconciliationChart').getContext('2d');
+        if (charts.reconciliation) charts.reconciliation.destroy();
 
-      charts.reconciliation = new Chart(ctx, {
+        charts.reconciliation = new Chart(ctx, {
         type: 'doughnut',
         data: {
           labels: ['Reconciled', 'Pending'],
@@ -1376,6 +1439,9 @@
           },
         },
       });
+      } catch (err) {
+        console.error('Error rendering reconciliation chart:', err);
+      }
     }
 
     // ═══════════════════════════════════════════════════════
@@ -1402,7 +1468,7 @@
         localStorage.setItem('treasury-last-sync', lastSyncTime.toISOString());
         localStorage.setItem('treasury-transactions', JSON.stringify(transactions));
         updateSyncStatus('success');
-        rerenderActiveTab();
+        await rerenderActiveTab();
       } catch (err) {
         console.error('Sync error:', err);
         syncRetries++;
@@ -1415,7 +1481,7 @@
           const cached = localStorage.getItem('treasury-transactions');
           if (cached) {
             transactions = JSON.parse(cached);
-            rerenderActiveTab();
+            await rerenderActiveTab();
           }
         }
       }
@@ -1445,13 +1511,13 @@
       document.getElementById(tabName).classList.add('active');
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
       document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-      rerenderActiveTab();
+      rerenderActiveTab().catch(err => console.error('Tab render error:', err));
     }
 
-    function rerenderActiveTab() {
-      if (currentTab === 'dashboard') renderDashboard();
+    async function rerenderActiveTab() {
+      if (currentTab === 'dashboard') await renderDashboard();
       else if (currentTab === 'transactions') renderTransactionsTable();
-      else if (currentTab === 'analytics') renderAnalytics();
+      else if (currentTab === 'analytics') await renderAnalytics();
     }
 
     // ═══════════════════════════════════════════════════════
