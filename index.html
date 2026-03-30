@@ -11,8 +11,8 @@
   <!-- Chart.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"></script>
 
-  <!-- PapaParse -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/papaparse/5.4.1/papaparse.min.js"></script>
+  <!-- PapaParse (with fallback) -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
   <style>
     * {
@@ -750,8 +750,42 @@
       return response.text();
     }
 
+    // Fallback CSV parser if PapaParse fails to load
+    function parseCSVFallback(csvText) {
+      const lines = csvText.split('\n').filter(line => line.trim());
+      const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+      const rows = [];
+
+      for (let i = 1; i < lines.length; i++) {
+        const values = [];
+        let current = '';
+        let inQuotes = false;
+
+        for (let j = 0; j < lines[i].length; j++) {
+          const char = lines[i][j];
+          if (char === '"') {
+            inQuotes = !inQuotes;
+          } else if (char === ',' && !inQuotes) {
+            values.push(current.trim().replace(/^"|"$/g, ''));
+            current = '';
+          } else {
+            current += char;
+          }
+        }
+        values.push(current.trim().replace(/^"|"$/g, ''));
+
+        const row = {};
+        headers.forEach((h, idx) => {
+          row[h] = values[idx] || '';
+        });
+        rows.push(row);
+      }
+      return { data: rows };
+    }
+
     function parseTransactions(csvText) {
-      const parsed = Papa.parse(csvText, { header: true, dynamicTyping: false });
+      const parser = typeof Papa !== 'undefined' ? Papa : { parse: parseCSVFallback };
+      const parsed = parser.parse(csvText, { header: true, dynamicTyping: false });
       return parsed.data
         .filter(row => row.Date && row.Date.trim())
         .map(transformRow)
@@ -1348,6 +1382,17 @@
     // DATA SYNC
     // ═══════════════════════════════════════════════════════
     async function syncData() {
+      // Wait for CSV parser to load (PapaParse or fallback)
+      let parserRetries = 0;
+      while (typeof Papa === 'undefined' && parserRetries < 10) {
+        await new Promise(resolve => setTimeout(resolve, 200));
+        parserRetries++;
+      }
+
+      if (typeof Papa === 'undefined') {
+        console.warn('PapaParse library not available, using fallback CSV parser');
+      }
+
       updateSyncStatus('loading');
       try {
         const csvText = await fetchTransactionsCSV();
