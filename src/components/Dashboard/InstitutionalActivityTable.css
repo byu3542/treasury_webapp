@@ -23,8 +23,7 @@
 }
 
 .activity-row:hover {
-  background-color: var(--bg-hover);
-  border-color: var(--border-hover);
+  background-color: var(--bg-tertiary);
 }
 
 .activity-icon {

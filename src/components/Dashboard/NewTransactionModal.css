@@ -8,7 +8,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
+  z-index: var(--z-modal-backdrop);
   animation: fadeIn 0.2s ease-in;
 }
 
@@ -29,6 +29,7 @@
   max-width: 500px;
   box-shadow: var(--shadow-lg);
   animation: slideUp 0.3s ease-out;
+  z-index: var(--z-modal);
 }
 
 @keyframes slideUp {
