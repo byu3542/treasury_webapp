@@ -69,9 +69,10 @@ async function fetchRange(spreadsheetId, range) {
   const encoded = encodeURIComponent(range)
   const url = `${API_BASE}/${spreadsheetId}/values/${encoded}?valueRenderOption=FORMATTED_VALUE&dateTimeRenderOption=FORMATTED_STRING`
   const data = await sheetsGet(url)
-  // Add 500ms delay to avoid hitting rate limits on large sheets (12k+ rows)
-  // Google Sheets API: 100 requests per 100 seconds per user per project
-  await new Promise(resolve => setTimeout(resolve, 500))
+  // Add 1500ms delay to avoid hitting rate limits on large sheets (12k+ rows)
+  // Google Sheets API: 60 requests per minute per user
+  // 1500ms = 40 requests/minute (safe buffer: 33% of limit)
+  await new Promise(resolve => setTimeout(resolve, 1500))
   return data.values ?? []
 }
 
