@@ -69,6 +69,8 @@ async function fetchRange(spreadsheetId, range) {
   const encoded = encodeURIComponent(range)
   const url = `${API_BASE}/${spreadsheetId}/values/${encoded}?valueRenderOption=FORMATTED_VALUE&dateTimeRenderOption=FORMATTED_STRING`
   const data = await sheetsGet(url)
+  // Add 100ms delay to avoid hitting rate limits on large sheets
+  await new Promise(resolve => setTimeout(resolve, 100))
   return data.values ?? []
 }
 
