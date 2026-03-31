@@ -6,6 +6,7 @@ import { useTransactions } from '../hooks/useTransactions.js'
 import { useFilters } from '../hooks/useFilters.js'
 import { setReconcile, getAllReconciliation } from '../services/db.js'
 import { useQueryClient } from '@tanstack/react-query'
+import DateRangeFilter from './DateRangeFilter.jsx'
 
 const ROW_HEIGHT = 44
 
@@ -268,6 +269,9 @@ export default function TransactionTable() {
 
   return (
     <div className="flex h-full flex-col gap-3" style={{ height: 'calc(100vh - 120px)' }}>
+      {/* Date range filter */}
+      <DateRangeFilter preset={filters.datePreset} onChange={(preset) => updateFilter('datePreset', preset)} />
+
       {/* Filter bar */}
       <FilterBar
         filters={filters}
