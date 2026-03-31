@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Layout from './components/Layout.jsx'
+import ErrorBoundary from './components/Common/ErrorBoundary.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 import Transactions from './pages/Transactions.jsx'
 import Analytics from './components/Analytics.jsx'
@@ -37,8 +38,10 @@ export default function App() {
   }
 
   return (
-    <Layout activeTab={activeTab} onTabChange={setActiveTab} isAuthed={isAuthed} config={config}>
-      {tabs[activeTab]}
-    </Layout>
+    <ErrorBoundary>
+      <Layout activeTab={activeTab} onTabChange={setActiveTab} isAuthed={isAuthed} config={config}>
+        {tabs[activeTab]}
+      </Layout>
+    </ErrorBoundary>
   )
 }

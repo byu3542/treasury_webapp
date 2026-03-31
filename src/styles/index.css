@@ -1,6 +1,7 @@
 /* Import Sovereign design tokens and global styles */
 @import './designTokens.css';
 @import './global.css';
+@import './accessibility.css';
 
 @tailwind base;
 @tailwind components;
