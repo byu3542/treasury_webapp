@@ -41,7 +41,10 @@ export function initDB() {
 }
 
 function getDB() {
-  if (!dbPromise) throw new Error('DB not initialized. Call initDB() first.')
+  if (!dbPromise) {
+    // Auto-initialize if not already done
+    initDB()
+  }
   return dbPromise
 }
 
