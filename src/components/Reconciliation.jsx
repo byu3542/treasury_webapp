@@ -13,7 +13,7 @@ import {
   getConfidenceLabel,
   getConfidenceColor,
 } from '../utils/reconciliationUtils.js'
-import DateFilterControl from './Common/DateFilterControl.jsx'
+import DateFilterControl from './Common/DateFilterControl'
 
 // ─── Header Component ──────────────────────────────────────────────────────
 
