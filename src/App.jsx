@@ -3,6 +3,7 @@ import Layout from './components/Layout.jsx'
 import Dashboard from './components/Dashboard.jsx'
 import TransactionTable from './components/TransactionTable.jsx'
 import Analytics from './components/Analytics.jsx'
+import Reconciliation from './components/Reconciliation.jsx'
 import Settings from './components/Settings.jsx'
 import { useAuth } from './hooks/useAuth.js'
 import { initDB } from './services/db.js'
@@ -19,6 +20,7 @@ export default function App() {
   const tabs = {
     dashboard: <Dashboard />,
     transactions: <TransactionTable />,
+    reconciliation: <Reconciliation />,
     analytics: <Analytics />,
     settings: <Settings />,
   }
