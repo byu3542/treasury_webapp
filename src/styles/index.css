@@ -93,10 +93,10 @@
 
   /* Nav item */
   .nav-item {
-    @apply flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-bg-hover hover:text-text-primary;
+    @apply flex cursor-pointer items-center gap-3 rounded-lg border-l-2 border-l-transparent px-3 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-bg-hover hover:text-text-primary;
   }
   .nav-item.active {
-    @apply bg-gold/10 text-gold;
+    @apply border-l-gold bg-gold/10 text-gold;
   }
 
   /* Amount color utility */
