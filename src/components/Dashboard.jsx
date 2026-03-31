@@ -1,8 +1,10 @@
 import { useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth.js'
 import { useTransactions, useAggregates } from '../hooks/useTransactions.js'
+import { useFilters } from '../hooks/useFilters.js'
 import { getMeta } from '../services/db.js'
 import { useState } from 'react'
+import DateRangeFilter from './DateRangeFilter.jsx'
 
 function fmt(n) {
   return new Intl.NumberFormat('en-US', {
@@ -194,7 +196,8 @@ function WeeklyCashFlow({ transactions }) {
 export default function Dashboard() {
   const { isAuthed, config } = useAuth()
   const { transactions, isLoadingCache, isSyncing, syncError, sync, autoSync } = useTransactions(config, isAuthed)
-  const { byAccount, byCategory, summary } = useAggregates(transactions)
+  const { filtered, datePreset, setDatePreset } = useFilters(transactions)
+  const { byAccount, byCategory, summary } = useAggregates(filtered)
   const [rowCount, setRowCount] = useState(null)
 
   useEffect(() => {
@@ -263,6 +266,9 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-4">
+      {/* Date Filter */}
+      <DateRangeFilter preset={datePreset} onChange={setDatePreset} />
+
       {/* KPI Cards */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <KpiCard
@@ -284,7 +290,7 @@ export default function Dashboard() {
         <KpiCard
           label="Accounts"
           value={byAccount.length}
-          sub={`${transactions.length.toLocaleString()} txns`}
+          sub={`${filtered.length.toLocaleString()} txns`}
           accent="gold"
         />
       </div>
@@ -307,8 +313,8 @@ export default function Dashboard() {
 
         {/* 13-week chart + risk */}
         <div className="space-y-3 lg:col-span-1">
-          <WeeklyCashFlow transactions={transactions} />
-          <RiskAlerts transactions={transactions} />
+          <WeeklyCashFlow transactions={filtered} />
+          <RiskAlerts transactions={filtered} />
         </div>
 
         {/* Category breakdown */}
