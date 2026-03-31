@@ -244,7 +244,7 @@ function TopOutflows({ byCategory }) {
 export default function Analytics() {
   const { isAuthed, config } = useAuth()
   const { transactions, isLoadingCache } = useTransactions(config, isAuthed)
-  const { filtered, datePreset, setDatePreset } = useFilters(transactions)
+  const { filtered, datePreset, setDatePreset, filters, updateFilter } = useFilters(transactions)
   const { byAccount, byCategory, summary } = useAggregates(filtered)
 
   if (!isAuthed || !config) {
@@ -268,7 +268,16 @@ export default function Analytics() {
   return (
     <div className="space-y-4">
       {/* Date filter */}
-      <DateRangeFilter preset={datePreset} onChange={setDatePreset} />
+      <DateRangeFilter
+        preset={datePreset}
+        onChange={setDatePreset}
+        customDateFrom={filters.dateFrom}
+        customDateTo={filters.dateTo}
+        onCustomDateChange={(type, value) => {
+          if (type === 'from') updateFilter('dateFrom', value)
+          if (type === 'to') updateFilter('dateTo', value)
+        }}
+      />
 
       {/* Summary row */}
       {summary && (

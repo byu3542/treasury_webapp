@@ -196,7 +196,7 @@ function WeeklyCashFlow({ transactions }) {
 export default function Dashboard() {
   const { isAuthed, config } = useAuth()
   const { transactions, isLoadingCache, isSyncing, syncError, sync, autoSync } = useTransactions(config, isAuthed)
-  const { filtered, datePreset, setDatePreset } = useFilters(transactions)
+  const { filtered, datePreset, setDatePreset, filters, updateFilter } = useFilters(transactions)
   const { byAccount, byCategory, summary } = useAggregates(filtered)
   const [rowCount, setRowCount] = useState(null)
 
@@ -267,7 +267,16 @@ export default function Dashboard() {
   return (
     <div className="space-y-4">
       {/* Date Filter */}
-      <DateRangeFilter preset={datePreset} onChange={setDatePreset} />
+      <DateRangeFilter
+        preset={datePreset}
+        onChange={setDatePreset}
+        customDateFrom={filters.dateFrom}
+        customDateTo={filters.dateTo}
+        onCustomDateChange={(type, value) => {
+          if (type === 'from') updateFilter('dateFrom', value)
+          if (type === 'to') updateFilter('dateTo', value)
+        }}
+      />
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">

@@ -270,7 +270,16 @@ export default function TransactionTable() {
   return (
     <div className="flex h-full flex-col gap-3" style={{ height: 'calc(100vh - 120px)' }}>
       {/* Date range filter */}
-      <DateRangeFilter preset={filters.datePreset} onChange={(preset) => updateFilter('datePreset', preset)} />
+      <DateRangeFilter
+        preset={filters.datePreset}
+        onChange={(preset) => updateFilter('datePreset', preset)}
+        customDateFrom={filters.dateFrom}
+        customDateTo={filters.dateTo}
+        onCustomDateChange={(type, value) => {
+          if (type === 'from') updateFilter('dateFrom', value)
+          if (type === 'to') updateFilter('dateTo', value)
+        }}
+      />
 
       {/* Filter bar */}
       <FilterBar
