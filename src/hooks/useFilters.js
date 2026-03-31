@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
+import { filterByDatePreset, sortTransactionsDesc } from '../utils/dateUtils.js'
 
 const EMPTY = {
   search: '',
@@ -9,14 +10,36 @@ const EMPTY = {
   amountMin: '',
   amountMax: '',
   reconcileStatus: 'all', // 'all' | 'cleared' | 'pending' | 'unreconciled'
+  datePreset: 'Last 30 Days', // Smart default
 }
 
 /**
  * Filter and search transactions entirely in-memory.
  * All operations < 500ms for 1000 rows.
+ * Includes localStorage persistence for date preset.
  */
 export function useFilters(transactions) {
-  const [filters, setFilters] = useState(EMPTY)
+  // Initialize with localStorage preference for datePreset
+  const [filters, setFilters] = useState(() => {
+    const saved = localStorage.getItem('treasury_dateFilter')
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved)
+        return { ...EMPTY, datePreset: parsed.preset || EMPTY.datePreset }
+      } catch {
+        return EMPTY
+      }
+    }
+    return EMPTY
+  })
+
+  // Persist datePreset to localStorage
+  useEffect(() => {
+    localStorage.setItem(
+      'treasury_dateFilter',
+      JSON.stringify({ preset: filters.datePreset, appliedAt: Date.now() })
+    )
+  }, [filters.datePreset])
 
   const updateFilter = (key, value) =>
     setFilters((prev) => ({ ...prev, [key]: value }))
@@ -29,6 +52,14 @@ export function useFilters(transactions) {
 
   const filtered = useMemo(() => {
     let result = transactions
+
+    // Apply date preset filter first (fastest)
+    if (filters.datePreset && filters.datePreset !== 'All Time') {
+      result = filterByDatePreset(result, filters.datePreset)
+    } else {
+      // Still sort by date descending even without preset
+      result = sortTransactionsDesc(result)
+    }
 
     if (filters.search) {
       const q = filters.search.toLowerCase()
@@ -104,5 +135,7 @@ export function useFilters(transactions) {
     hasActiveFilters,
     categories,
     accounts,
+    datePreset: filters.datePreset,
+    setDatePreset: (preset) => updateFilter('datePreset', preset),
   }
 }
