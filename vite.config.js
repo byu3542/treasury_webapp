@@ -6,9 +6,14 @@ export default defineConfig({
   base: '/treasury_webapp/',
   build: {
     outDir: 'dist',
+<<<<<<< Updated upstream
     sourcemap: false,
     minify: 'terser',
   },
+=======
+    sourcemap: false
+  }
+>>>>>>> Stashed changes
 })
 ```
 
