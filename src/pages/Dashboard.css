@@ -1,0 +1,183 @@
+.dashboard {
+  padding: var(--spacing-xl);
+  background-color: var(--bg-primary);
+  min-height: 100vh;
+}
+
+.dashboard-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  color: var(--text-secondary);
+  font-size: var(--text-base-size);
+}
+
+/* ─────────────────────────────────────────────────────────
+   PAGE HEADER
+   ───────────────────────────────────────────────────────── */
+
+.dashboard-header {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+}
+
+.page-title {
+  font-size: var(--text-h2-size);
+  font-weight: var(--text-h2-weight);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* ─────────────────────────────────────────────────────────
+   KPI GRID
+   ───────────────────────────────────────────────────────── */
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-2xl);
+}
+
+/* ─────────────────────────────────────────────────────────
+   MAIN CONTENT GRID
+   ───────────────────────────────────────────────────────── */
+
+.dashboard-content {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: var(--spacing-xl);
+  align-items: start;
+}
+
+.content-column-large {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.content-column-small {
+  position: sticky;
+  top: calc(var(--header-height) + var(--spacing-lg));
+}
+
+/* ─────────────────────────────────────────────────────────
+   PANEL STYLES
+   ───────────────────────────────────────────────────────── */
+
+.panel {
+  background-color: var(--bg-secondary);
+  border: var(--border-width) solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  transition: all var(--transition-base);
+}
+
+.panel:hover {
+  border-color: var(--border-hover);
+}
+
+.panel-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-sm) 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.panel-subtitle {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin: 0 0 var(--spacing-lg) 0;
+  font-weight: 400;
+}
+
+.panel-medium {
+  flex: 1;
+  min-height: 280px;
+}
+
+/* Panel Row (3-column grid) */
+.panel-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-lg);
+}
+
+/* ─────────────────────────────────────────────────────────
+   RESPONSIVE DESIGN
+   ───────────────────────────────────────────────────────── */
+
+@media (max-width: 1439px) {
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-content {
+    grid-template-columns: 1fr;
+  }
+
+  .content-column-small {
+    position: relative;
+    top: 0;
+  }
+
+  .panel-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1023px) {
+  .dashboard {
+    padding: var(--spacing-lg);
+  }
+
+  .kpi-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .header-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .page-title {
+    font-size: var(--text-h3-size);
+  }
+
+  .panel {
+    padding: var(--spacing-md);
+  }
+
+  .panel-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .dashboard {
+    padding: var(--spacing-md);
+  }
+
+  .dashboard-header {
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .kpi-grid {
+    gap: var(--spacing-sm);
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+}

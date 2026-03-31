@@ -1,0 +1,87 @@
+.kpi-card {
+  background-color: var(--bg-secondary);
+  border: var(--border-width) solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-base);
+}
+
+.kpi-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.kpi-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  letter-spacing: 0.5px;
+  margin-bottom: var(--spacing-sm);
+}
+
+.kpi-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-family-mono);
+  margin-bottom: var(--spacing-sm);
+  line-height: 1.2;
+}
+
+.kpi-trend {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: var(--spacing-md);
+}
+
+.trend-success {
+  color: var(--green-success);
+}
+
+.trend-error {
+  color: var(--red-error);
+}
+
+.kpi-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, currentColor);
+}
+
+.kpi-bar-primary { color: var(--teal-400); }
+.kpi-bar-success { color: var(--green-success); }
+.kpi-bar-error { color: var(--red-error); }
+.kpi-bar-info { color: var(--blue-info); }
+
+.kpi-accounts {
+  display: flex;
+  gap: 8px;
+  margin-top: var(--spacing-md);
+}
+
+.account-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--teal-400), var(--teal-600));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-inverse);
+  border: 1px solid var(--border-default);
+}
+
+.account-avatar.overflow {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border-color: var(--border-hover);
+}

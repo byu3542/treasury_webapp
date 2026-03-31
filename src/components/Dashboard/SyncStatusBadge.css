@@ -1,0 +1,116 @@
+.sync-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background-color: var(--bg-tertiary);
+  border: var(--border-width) solid var(--border-default);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+}
+
+.sync-badge.live {
+  border-color: var(--green-success);
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
+.sync-badge.syncing {
+  border-color: var(--amber-warning);
+  background-color: rgba(245, 158, 11, 0.1);
+}
+
+.sync-badge.stale {
+  border-color: var(--border-default);
+  background-color: var(--bg-tertiary);
+}
+
+.sync-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--green-success);
+  flex-shrink: 0;
+}
+
+.sync-badge.syncing .sync-dot {
+  background-color: var(--amber-warning);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.sync-badge.stale .sync-dot {
+  background-color: var(--text-tertiary);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.sync-dot.spinning {
+  animation: spin 1s linear infinite !important;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.sync-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.sync-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.sync-message {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  font-weight: 400;
+}
+
+.sync-button {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.sync-button:hover:not(:disabled) {
+  color: var(--teal-400);
+}
+
+.sync-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sync-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.sync-icon.spinning {
+  animation: spin 1s linear infinite;
+}
