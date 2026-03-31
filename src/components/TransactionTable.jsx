@@ -7,6 +7,7 @@ import { useFilters } from '../hooks/useFilters.js'
 import { setReconcile, getAllReconciliation } from '../services/db.js'
 import { useQueryClient } from '@tanstack/react-query'
 import DateRangeFilter from './DateRangeFilter.jsx'
+import { exportTransactionsToCSV, generateFilterSummary } from '../utils/csvExport.js'
 
 const ROW_HEIGHT = 44
 
@@ -228,6 +229,8 @@ export default function TransactionTable() {
   const { transactions, isLoadingCache, isSyncing, syncError, sync } = useTransactions(config, isAuthed)
   const { filters, filtered, updateFilter, resetFilters, hasActiveFilters, categories, accounts } = useFilters(transactions)
   const [reconcileMap, setReconcileMap] = useState(new Map())
+  const [isExporting, setIsExporting] = useState(false)
+  const [exportError, setExportError] = useState(null)
   const queryClient = useQueryClient()
 
   // Load reconcile state from IndexedDB
@@ -246,6 +249,32 @@ export default function TransactionTable() {
     // Invalidate cache so dashboard reconciliation rate refreshes
     queryClient.invalidateQueries({ queryKey: ['transactions', 'cache'] })
   }, [queryClient])
+
+  const handleExportCSV = useCallback(async () => {
+    if (isExporting || !filtered || filtered.length === 0) return
+
+    try {
+      setIsExporting(true)
+      setExportError(null)
+
+      // Generate filter summary for metadata
+      const filterSummary = generateFilterSummary(filters)
+
+      // Prepare export options
+      const exportOptions = {
+        includeMetadata: true,
+        filterSummary,
+      }
+
+      // Export the filtered transactions
+      exportTransactionsToCSV(filtered, exportOptions)
+    } catch (err) {
+      console.error('Export failed:', err)
+      setExportError(err.message || 'Export failed')
+    } finally {
+      setIsExporting(false)
+    }
+  }, [filtered, filters, isExporting])
 
   const itemData = { items: filtered, reconcileMap, onToggleReconcile: handleToggleReconcile }
 
@@ -269,6 +298,50 @@ export default function TransactionTable() {
 
   return (
     <div className="flex h-full flex-col gap-3" style={{ height: 'calc(100vh - 120px)' }}>
+      {/* Export button and stats row */}
+      <div className="flex items-center justify-between gap-3">
+        <div className="text-sm text-text-muted">
+          {filtered.length > 0 ? (
+            <>
+              <span className="font-mono text-2xs uppercase tracking-widest">
+                {filtered.length.toLocaleString()} transaction{filtered.length !== 1 ? 's' : ''}
+              </span>
+            </>
+          ) : (
+            <span className="font-mono text-2xs text-text-muted">No transactions to display</span>
+          )}
+        </div>
+
+        <button
+          onClick={handleExportCSV}
+          disabled={isExporting || !filtered || filtered.length === 0}
+          className={`btn px-3 py-1.5 font-mono text-xs font-medium transition-colors ${
+            isExporting || !filtered || filtered.length === 0
+              ? 'bg-bg-hover text-text-muted cursor-not-allowed'
+              : 'bg-gold/10 border border-gold/50 text-gold hover:bg-gold/20'
+          }`}
+          title={!filtered || filtered.length === 0 ? 'No data to export' : 'Export filtered transactions to CSV'}
+        >
+          {isExporting ? (
+            <>
+              <span className="inline-block mr-1">⏳</span>
+              Exporting…
+            </>
+          ) : (
+            <>
+              <span className="inline-block mr-1">↓</span>
+              Export CSV
+            </>
+          )}
+        </button>
+      </div>
+
+      {exportError && (
+        <div className="rounded-lg border border-danger/50 bg-danger/10 p-2 text-xs text-danger">
+          Export failed: {exportError}
+        </div>
+      )}
+
       {/* Date range filter */}
       <DateRangeFilter
         preset={filters.datePreset}
