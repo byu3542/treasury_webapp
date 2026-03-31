@@ -1,6 +1,8 @@
 import { useMemo } from 'react'
 import { useAuth } from '../hooks/useAuth.js'
 import { useTransactions, useAggregates } from '../hooks/useTransactions.js'
+import { useFilters } from '../hooks/useFilters.js'
+import DateRangeFilter from './DateRangeFilter.jsx'
 
 function fmt(n) {
   return new Intl.NumberFormat('en-US', {
@@ -242,7 +244,8 @@ function TopOutflows({ byCategory }) {
 export default function Analytics() {
   const { isAuthed, config } = useAuth()
   const { transactions, isLoadingCache } = useTransactions(config, isAuthed)
-  const { byAccount, byCategory, summary } = useAggregates(transactions)
+  const { filtered, datePreset, setDatePreset } = useFilters(transactions)
+  const { byAccount, byCategory, summary } = useAggregates(filtered)
 
   if (!isAuthed || !config) {
     return (
@@ -264,6 +267,9 @@ export default function Analytics() {
 
   return (
     <div className="space-y-4">
+      {/* Date filter */}
+      <DateRangeFilter preset={datePreset} onChange={setDatePreset} />
+
       {/* Summary row */}
       {summary && (
         <div className="grid grid-cols-3 gap-3">
@@ -286,15 +292,15 @@ export default function Analytics() {
 
       {/* Charts */}
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-        <MonthlyCashFlow transactions={transactions} />
-        <CategoryTrends transactions={transactions} />
+        <MonthlyCashFlow transactions={filtered} />
+        <CategoryTrends transactions={filtered} />
       </div>
 
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <TopOutflows byCategory={byCategory} />
         </div>
-        <ReconciliationStats transactions={transactions} />
+        <ReconciliationStats transactions={filtered} />
       </div>
     </div>
   )
