@@ -1,13 +1,16 @@
 import { useState, useMemo, useCallback } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { useTransactions } from '../hooks/useTransactions'
+import { useDateFilter } from '../hooks/useDateFilter'
 import { formatCurrency, formatDate, formatTime, formatStatus } from '../utils/formatters'
 import { exportTransactionsToCSV } from '../utils/csvExport'
+import DateFilterControl from '../components/Common/DateFilterControl'
 import './Transactions.css'
 
 export default function Transactions() {
   const { isAuthed, config } = useAuth()
   const { transactions } = useTransactions(config, isAuthed)
+  const { selectedRange, startDate, endDate, handleRangeChange, getMinDateFromTransactions } = useDateFilter('last30', transactions)
 
   // Filter state
   const [dateFrom, setDateFrom] = useState('')
@@ -38,14 +41,18 @@ export default function Transactions() {
   // Filter transactions
   const filteredTransactions = useMemo(() => {
     return transactions.filter(tx => {
-      // Date range filter
+      // Date range filter (preset or manual)
+      const txDate = new Date(tx.dateISO || tx.date)
+      if (txDate < startDate || txDate > endDate) return false
+
+      // Manual date filter (if specified)
       if (dateFrom) {
-        const txDate = new Date(tx.dateISO || tx.date).toISOString().split('T')[0]
-        if (txDate < dateFrom) return false
+        const txDateStr = new Date(tx.dateISO || tx.date).toISOString().split('T')[0]
+        if (txDateStr < dateFrom) return false
       }
       if (dateTo) {
-        const txDate = new Date(tx.dateISO || tx.date).toISOString().split('T')[0]
-        if (txDate > dateTo) return false
+        const txDateStr = new Date(tx.dateISO || tx.date).toISOString().split('T')[0]
+        if (txDateStr > dateTo) return false
       }
 
       // Account filter
@@ -67,7 +74,7 @@ export default function Transactions() {
 
       return true
     })
-  }, [transactions, dateFrom, dateTo, selectedAccount, selectedStatus, searchTerm])
+  }, [transactions, startDate, endDate, dateFrom, dateTo, selectedAccount, selectedStatus, searchTerm])
 
   // Sort transactions
   const sortedTransactions = useMemo(() => {
@@ -151,6 +158,13 @@ export default function Transactions() {
         <h1 className="page-title">Transaction Ledger</h1>
         <p className="page-subtitle">Complete record of all institutional cash movements</p>
       </div>
+
+      {/* Date Filter Control */}
+      <DateFilterControl
+        selectedRange={selectedRange}
+        onRangeChange={handleRangeChange}
+        allTimeStartDate={getMinDateFromTransactions()}
+      />
 
       {/* Filter Bar */}
       <div className="filter-bar">

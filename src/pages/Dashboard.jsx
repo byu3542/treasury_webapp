@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { useTransactions } from '../hooks/useTransactions'
 import { useDashboardData } from '../hooks/useDashboardData'
+import { useDateFilter } from '../hooks/useDateFilter'
 import { formatCurrency, formatPercentage, formatDistanceToNow } from '../utils/formatters'
 import './Dashboard.css'
 
@@ -15,11 +16,13 @@ import InstitutionalActivityTable from '../components/Dashboard/InstitutionalAct
 import FullLedgerPreview from '../components/Dashboard/FullLedgerPreview'
 import FAB from '../components/Common/FAB'
 import NewTransactionModal from '../components/Dashboard/NewTransactionModal'
+import DateFilterControl from '../components/Common/DateFilterControl'
 
 export default function Dashboard() {
   const { isAuthed, config } = useAuth()
   const { transactions, isSyncing } = useTransactions(config, isAuthed)
   const dashboardData = useDashboardData(transactions, 5 * 60 * 1000) // 5 min sync
+  const { selectedRange, startDate, endDate, handleRangeChange, getMinDateFromTransactions } = useDateFilter('last30', transactions)
   const [showNewTxnModal, setShowNewTxnModal] = useState(false)
 
   if (!isAuthed || !config) {
@@ -30,7 +33,65 @@ export default function Dashboard() {
     )
   }
 
-  const { kpis, syncStatus, triggerSync } = dashboardData
+  // Filter transactions by selected date range
+  const filteredTransactions = useMemo(() => {
+    return transactions.filter((tx) => {
+      const txDate = new Date(tx.dateISO || tx.date)
+      return txDate >= startDate && txDate <= endDate
+    })
+  }, [transactions, startDate, endDate])
+
+  // Recalculate KPIs based on filtered transactions
+  const { kpis: allKpis, syncStatus, triggerSync } = dashboardData
+  const kpis = useMemo(() => {
+    if (filteredTransactions.length === 0) {
+      return {
+        netCashPosition: 0,
+        netCashPositionTrend: 0,
+        totalInflows30d: 0,
+        totalInflows30dTrend: 0,
+        totalOutflows30d: 0,
+        totalOutflows30dTrend: 0,
+        activeAccounts: [],
+        weeklyFlows: { inflows: [], outflows: [], labels: [] },
+        outflowDrivers: [],
+        institutionalActivity: [],
+        riskAlerts: allKpis.riskAlerts,
+      }
+    }
+
+    // Calculate net cash position
+    const netCashPosition = filteredTransactions.reduce((sum, tx) => sum + (tx.amount || 0), 0)
+
+    // Calculate inflows and outflows
+    const totalInflows30d = filteredTransactions
+      .filter((tx) => (tx.amount || 0) > 0)
+      .reduce((sum, tx) => sum + tx.amount, 0)
+
+    const totalOutflows30d = Math.abs(
+      filteredTransactions
+        .filter((tx) => (tx.amount || 0) < 0)
+        .reduce((sum, tx) => sum + tx.amount, 0)
+    )
+
+    // Get active accounts
+    const activeAccounts = [...new Set(filteredTransactions.map((tx) => tx.account).filter(Boolean))].sort()
+
+    // Keep other data from allKpis (can be enhanced later with filtered calculations)
+    return {
+      netCashPosition,
+      netCashPositionTrend: allKpis.netCashPositionTrend,
+      totalInflows30d,
+      totalInflows30dTrend: allKpis.totalInflows30dTrend,
+      totalOutflows30d,
+      totalOutflows30dTrend: allKpis.totalOutflows30dTrend,
+      activeAccounts,
+      weeklyFlows: allKpis.weeklyFlows,
+      outflowDrivers: allKpis.outflowDrivers,
+      institutionalActivity: allKpis.institutionalActivity,
+      riskAlerts: allKpis.riskAlerts,
+    }
+  }, [filteredTransactions, allKpis])
 
   return (
     <div className="dashboard">
@@ -47,6 +108,13 @@ export default function Dashboard() {
           />
         </div>
       </div>
+
+      {/* Date Filter Control */}
+      <DateFilterControl
+        selectedRange={selectedRange}
+        onRangeChange={handleRangeChange}
+        allTimeStartDate={getMinDateFromTransactions()}
+      />
 
       {/* KPI Grid */}
       <div className="kpi-grid">

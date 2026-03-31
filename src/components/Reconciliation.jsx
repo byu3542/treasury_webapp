@@ -1,5 +1,6 @@
 import { useAuth } from '../hooks/useAuth.js'
 import { useTransactions } from '../hooks/useTransactions.js'
+import { useDateFilter } from '../hooks/useDateFilter.js'
 import { useState, useMemo, useCallback } from 'react'
 import {
   calculateHealthScore,
@@ -12,6 +13,7 @@ import {
   getConfidenceLabel,
   getConfidenceColor,
 } from '../utils/reconciliationUtils.js'
+import DateFilterControl from './Common/DateFilterControl.jsx'
 
 // ─── Header Component ──────────────────────────────────────────────────────
 
@@ -260,6 +262,7 @@ function IntelligenceBriefing({ anomalies, tips }) {
 export default function Reconciliation() {
   const { isAuthed, config } = useAuth()
   const { transactions } = useTransactions(config, isAuthed)
+  const { selectedRange, startDate, endDate, handleRangeChange, getMinDateFromTransactions } = useDateFilter('last30', transactions)
 
   // Filter state
   const [filters, setFilters] = useState({
@@ -276,6 +279,13 @@ export default function Reconciliation() {
   const filtered = useMemo(() => {
     let result = transactions
 
+    // Apply date filter (preset or custom)
+    result = result.filter((tx) => {
+      const txDate = new Date(tx.dateISO || tx.date)
+      return txDate >= startDate && txDate <= endDate
+    })
+
+    // Apply manual date filters (if specified)
     if (filters.dateFrom) {
       const from = new Date(filters.dateFrom).getTime()
       result = result.filter((tx) => new Date(tx.dateISO || tx.date).getTime() >= from)
@@ -295,7 +305,7 @@ export default function Reconciliation() {
     }
 
     return result
-  }, [transactions, filters])
+  }, [transactions, startDate, endDate, filters])
 
   // Calculate metrics
   const healthScore = calculateHealthScore(filtered)
@@ -364,6 +374,13 @@ export default function Reconciliation() {
         selectedCount={selectedIds.size}
         totalValue={selectedValue}
         onBatchReconcile={handleBatchReconcile}
+      />
+
+      {/* Date Filter Control */}
+      <DateFilterControl
+        selectedRange={selectedRange}
+        onRangeChange={handleRangeChange}
+        allTimeStartDate={getMinDateFromTransactions()}
       />
 
       {/* Filters */}

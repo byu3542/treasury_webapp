@@ -1,0 +1,193 @@
+.date-filter-control {
+  padding: var(--spacing-lg);
+  background: var(--bg-secondary);
+  border: var(--border-width) solid var(--border-default);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.filter-label {
+  display: block;
+  font-family: var(--font-family-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-bottom: var(--spacing-md);
+  margin: 0 0 var(--spacing-md) 0;
+}
+
+.filter-buttons-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.filter-btn {
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.08);
+  color: #a8b5c4;
+  font-family: var(--font-family-mono);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.filter-btn:hover:not(.active):not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+  color: #f0f4f8;
+}
+
+.filter-btn.active {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fbbf24;
+  border-color: #fbbf24;
+  box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.1);
+}
+
+.filter-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.date-range-display {
+  font-family: var(--font-family-mono);
+  font-size: 11px;
+  color: #a8b5c4;
+  margin-top: var(--spacing-md);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.custom-date-picker {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.date-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.date-input-group label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  letter-spacing: 0.5px;
+}
+
+.date-input-group input {
+  padding: 8px;
+  background: var(--bg-secondary);
+  border: var(--border-width) solid var(--border-default);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-family: var(--font-family-mono);
+  transition: all var(--transition-fast);
+}
+
+.date-input-group input:focus {
+  outline: none;
+  border-color: var(--teal-400);
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.1);
+}
+
+.custom-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-left: auto;
+}
+
+.btn-apply,
+.btn-cancel {
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: var(--font-family-mono);
+}
+
+.btn-apply {
+  background: var(--teal-400);
+  color: var(--text-inverse);
+  border-color: var(--teal-400);
+}
+
+.btn-apply:hover {
+  background: var(--teal-500);
+  border-color: var(--teal-500);
+}
+
+.btn-cancel {
+  background: transparent;
+  color: var(--text-tertiary);
+  border-color: var(--border-default);
+}
+
+.btn-cancel:hover {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border-color: var(--border-hover);
+}
+
+/* Responsive */
+@media (max-width: 1023px) {
+  .custom-date-picker {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .custom-actions {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .filter-buttons-container {
+    flex-direction: column;
+  }
+
+  .filter-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .custom-date-picker {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .date-input-group input {
+    width: 100%;
+  }
+
+  .custom-actions {
+    flex-direction: column;
+    margin-left: 0;
+  }
+
+  .btn-apply,
+  .btn-cancel {
+    width: 100%;
+  }
+}
