@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 
 export function useDateFilter(defaultRange = 'last30', transactions = []) {
   const [selectedRange, setSelectedRange] = useState(defaultRange)
@@ -58,7 +58,7 @@ export function useDateFilter(defaultRange = 'last30', transactions = []) {
     [customStartDate, customEndDate]
   )
 
-  const { startDate, endDate } = calculateDateRange(selectedRange)
+  const { startDate, endDate } = useMemo(() => calculateDateRange(selectedRange), [selectedRange, calculateDateRange])
 
   const handleRangeChange = useCallback((range, newStartDate, newEndDate) => {
     setSelectedRange(range)

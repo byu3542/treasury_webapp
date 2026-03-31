@@ -312,7 +312,7 @@ export default function Reconciliation() {
   const variance = calculateVariance(filtered)
   const counts = getStatusCounts(filtered)
   const anomalies = useMemo(() => detectAnomalies(filtered), [filtered])
-  const tips = useMemo(() => generateReconciliationTips(filtered, filters), [filtered, filters])
+  const tips = useMemo(() => generateReconciliationTips(filtered, filters), [filtered])
 
   // Get unique values for dropdowns
   const accounts = useMemo(() => [...new Set(transactions.map((t) => t.account).filter(Boolean))], [transactions])
