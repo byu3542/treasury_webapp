@@ -14,7 +14,8 @@
 import { getStoredToken } from './auth.js'
 
 const API_BASE = 'https://sheets.googleapis.com/v4/spreadsheets'
-const CHUNK_SIZE = 200
+const CHUNK_SIZE = 500 // Increased from 200 to reduce total requests by 60%
+const RATE_LIMIT_DELAY = 1500 // 1500ms = 40 req/min (safe margin under 60 req/min limit)
 
 /** Column header → field name mapping (matches your sheet headers). */
 const HEADER_MAP = {
@@ -44,11 +45,23 @@ function authHeader() {
   return { Authorization: `Bearer ${token}` }
 }
 
-async function sheetsGet(url) {
+async function sheetsGet(url, attempt = 0, maxRetries = 3) {
   const res = await fetch(url, { headers: authHeader() })
+
   if (res.status === 401) throw new Error('AUTH_EXPIRED')
   if (res.status === 403) throw new Error('PERMISSION_DENIED')
-  if (res.status === 429) throw new Error('QUOTA_EXCEEDED')
+
+  // Handle 429 with exponential backoff
+  if (res.status === 429) {
+    if (attempt < maxRetries) {
+      const backoffMs = Math.pow(2, attempt) * 2000 // 2s, 4s, 8s
+      console.warn(`Rate limited (429), retrying in ${backoffMs}ms (attempt ${attempt + 1}/${maxRetries})`)
+      await new Promise(resolve => setTimeout(resolve, backoffMs))
+      return sheetsGet(url, attempt + 1, maxRetries)
+    }
+    throw new Error('QUOTA_EXCEEDED')
+  }
+
   if (!res.ok) throw new Error(`Sheets API error: ${res.status} ${res.statusText}`)
   return res.json()
 }
@@ -69,10 +82,8 @@ async function fetchRange(spreadsheetId, range) {
   const encoded = encodeURIComponent(range)
   const url = `${API_BASE}/${spreadsheetId}/values/${encoded}?valueRenderOption=FORMATTED_VALUE&dateTimeRenderOption=FORMATTED_STRING`
   const data = await sheetsGet(url)
-  // Add 1500ms delay to avoid hitting rate limits on large sheets (12k+ rows)
-  // Google Sheets API: 60 requests per minute per user
-  // 1500ms = 40 requests/minute (safe buffer: 33% of limit)
-  await new Promise(resolve => setTimeout(resolve, 1500))
+  // Rate limit delay between requests
+  await new Promise(resolve => setTimeout(resolve, RATE_LIMIT_DELAY))
   return data.values ?? []
 }
 
