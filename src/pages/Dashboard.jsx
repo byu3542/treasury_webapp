@@ -21,7 +21,6 @@ import DateFilterControl from '../components/Common/DateFilterControl'
 export default function Dashboard() {
   const { isAuthed, config } = useAuth()
   const { transactions, isSyncing } = useTransactions(config, isAuthed)
-  const dashboardData = useDashboardData(transactions, 5 * 60 * 1000) // 5 min sync
   const { selectedRange, startDate, endDate, handleRangeChange, getMinDateFromTransactions } = useDateFilter('last30', transactions)
   const [showNewTxnModal, setShowNewTxnModal] = useState(false)
 
@@ -33,6 +32,18 @@ export default function Dashboard() {
     )
   }
 
+  // ✅ Filter transactions by selected date range
+  const filteredTransactions = useMemo(() => {
+    if (!transactions || !startDate || !endDate) return transactions || []
+
+    return transactions.filter(tx => {
+      const txDate = new Date(tx.dateISO || tx.date)
+      return txDate >= startDate && txDate <= endDate
+    })
+  }, [transactions, startDate, endDate])
+
+  // ✅ Calculate KPIs from filtered transactions
+  const dashboardData = useDashboardData(filteredTransactions, 5 * 60 * 1000) // 5 min sync
   const { kpis, syncStatus, triggerSync } = dashboardData
 
   return (
@@ -113,7 +124,7 @@ export default function Dashboard() {
             {/* Full Ledger Preview */}
             <div className="panel panel-medium">
               <h3 className="panel-title">Latest Transactions</h3>
-              <FullLedgerPreview transactions={transactions} />
+              <FullLedgerPreview transactions={filteredTransactions} />
             </div>
           </div>
         </div>
