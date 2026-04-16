@@ -28,8 +28,8 @@ export default function DateRangeFilter({
               }}
               className={`px-3 py-1.5 rounded-lg font-mono text-xs font-medium transition-colors ${
                 preset === p && !showCustom
-                  ? 'bg-gold/20 border border-gold/50 text-gold'
-                  : 'bg-bg-hover border border-bg-border text-text-secondary hover:text-gold hover:border-gold/50'
+                  ? 'bg-terracotta/20 border border-terracotta/50 text-terracotta'
+                  : 'bg-bg-hover border border-bg-border text-text-secondary hover:text-terracotta hover:border-terracotta/50'
               }`}
             >
               {p}
@@ -39,8 +39,8 @@ export default function DateRangeFilter({
             onClick={() => setShowCustom(!showCustom)}
             className={`px-3 py-1.5 rounded-lg font-mono text-xs font-medium transition-colors ${
               showCustom
-                ? 'bg-teal/20 border border-teal/50 text-teal'
-                : 'bg-bg-hover border border-bg-border text-text-secondary hover:text-teal hover:border-teal/50'
+                ? 'bg-terracotta/20 border border-terracotta/50 text-terracotta'
+                : 'bg-bg-hover border border-bg-border text-text-secondary hover:text-terracotta hover:border-terracotta/50'
             }`}
           >
             Custom
@@ -81,7 +81,7 @@ export default function DateRangeFilter({
             </div>
           </div>
           {customDateFrom || customDateTo ? (
-            <p className="font-mono text-2xs text-teal">
+            <p className="font-mono text-2xs text-terracotta">
               {customDateFrom && customDateTo
                 ? `${customDateFrom} → ${customDateTo}`
                 : customDateFrom

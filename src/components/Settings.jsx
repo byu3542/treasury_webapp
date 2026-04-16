@@ -83,14 +83,14 @@ export default function Settings() {
         <div className="space-y-2 rounded-lg bg-bg-hover p-3">
           <p className="font-mono text-xs text-text-secondary">Follow these steps once to enable the API:</p>
           <ol className="list-inside list-decimal space-y-1.5 font-mono text-xs text-text-muted">
-            <li>Go to <span className="text-gold">console.cloud.google.com</span></li>
+            <li>Go to <span className="text-terracotta">console.cloud.google.com</span></li>
             <li>Create a project → Enable <strong className="text-text-secondary">Google Sheets API</strong></li>
             <li>Go to <strong className="text-text-secondary">APIs & Services → Credentials</strong></li>
             <li>Create <strong className="text-text-secondary">OAuth 2.0 Client ID</strong> (Web application type)</li>
             <li>
               Add your domain to <strong className="text-text-secondary">Authorized JavaScript origins</strong>
               <br />
-              <span className="text-teal">{window.location.origin}</span>
+              <span className="text-terracotta">{window.location.origin}</span>
             </li>
             <li>Copy the <strong className="text-text-secondary">Client ID</strong> below</li>
           </ol>

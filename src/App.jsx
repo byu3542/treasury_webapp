@@ -30,7 +30,7 @@ export default function App() {
     return (
       <div className="flex h-screen items-center justify-center bg-bg-main">
         <div className="text-center">
-          <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-bg-border border-t-gold" />
+          <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-bg-border border-t-terracotta" />
           <p className="font-mono text-sm text-text-secondary">Initializing database…</p>
         </div>
       </div>

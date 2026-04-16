@@ -60,7 +60,7 @@ function SyncBadge({ isSyncing, lastSync, onSync }) {
       <button
         onClick={onSync}
         disabled={isSyncing}
-        className="flex items-center gap-1.5 rounded-lg border border-bg-border px-2.5 py-1 font-mono text-xs text-text-secondary transition-colors hover:border-gold/40 hover:text-gold disabled:cursor-not-allowed disabled:opacity-40"
+        className="flex items-center gap-1.5 rounded-lg border border-bg-border px-2.5 py-1 font-mono text-xs text-text-secondary transition-colors hover:border-terracotta/40 hover:text-terracotta disabled:cursor-not-allowed disabled:opacity-40"
         title="Sync from Google Sheets"
       >
         <svg
@@ -112,8 +112,8 @@ export default function Layout({ activeTab, onTabChange, children }) {
       >
         {/* Logo */}
         <div className="flex h-14 items-center gap-2.5 border-b border-bg-border px-3">
-          <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-gold/15">
-            <span className="font-mono text-xs font-medium text-gold">T</span>
+          <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-terracotta/15">
+            <span className="font-mono text-xs font-medium text-terracotta">T</span>
           </div>
           {sidebarOpen && (
             <span className="font-headline text-sm font-semibold text-text-primary">Treasury</span>
@@ -164,7 +164,7 @@ export default function Layout({ activeTab, onTabChange, children }) {
             <button
               onClick={signIn}
               disabled={isAuthLoading || !config}
-              className="nav-item w-full text-gold disabled:cursor-not-allowed disabled:opacity-40"
+              className="nav-item w-full text-terracotta disabled:cursor-not-allowed disabled:opacity-40"
               title={!sidebarOpen ? 'Sign in with Google' : undefined}
             >
               <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4 flex-shrink-0">

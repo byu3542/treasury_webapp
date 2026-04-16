@@ -17,8 +17,8 @@ function fmt(n) {
 
 function KpiCard({ label, value, sub, accent }) {
   const colorMap = {
-    gold: 'border-gold/30 text-gold',
-    teal: 'border-teal/30 text-teal',
+    gold: 'border-terracotta/30 text-terracotta',
+    teal: 'border-terracotta/30 text-terracotta',
     green: 'border-success/30 text-success',
     red: 'border-danger/30 text-danger',
     muted: 'border-bg-border text-text-secondary',
@@ -115,7 +115,7 @@ function RiskAlerts({ transactions }) {
         <div key={i} className="flex items-start gap-2">
           <span
             className={`mt-0.5 h-2 w-2 flex-shrink-0 rounded-full ${
-              a.level === 'warn' ? 'bg-warning' : 'bg-teal'
+              a.level === 'warn' ? 'bg-warning' : 'bg-terracotta'
             }`}
           />
           <p className="font-mono text-xs text-text-secondary">{a.msg}</p>
@@ -211,8 +211,8 @@ export default function Dashboard() {
     return (
       <div className="flex h-full items-center justify-center">
         <div className="max-w-sm text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gold/10">
-            <span className="font-headline text-2xl text-gold">T</span>
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-terracotta/10">
+            <span className="font-headline text-2xl text-terracotta">T</span>
           </div>
           <h2 className="mb-2 font-headline text-lg text-text-primary">Connect your Google Sheet</h2>
           <p className="mb-4 font-body text-sm text-text-secondary">

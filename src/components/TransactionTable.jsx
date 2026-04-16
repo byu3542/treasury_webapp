@@ -216,7 +216,7 @@ function SummaryBar({ filtered, total }) {
         Outflows: <span className="text-danger">{fmt(outflows)}</span>
       </span>
       <span className="font-mono text-2xs text-text-muted">
-        Net: <span className={net >= 0 ? 'text-teal' : 'text-danger'}>{fmt(net)}</span>
+        Net: <span className={net >= 0 ? 'text-terracotta' : 'text-danger'}>{fmt(net)}</span>
       </span>
     </div>
   )
@@ -318,7 +318,7 @@ export default function TransactionTable() {
           className={`btn px-3 py-1.5 font-mono text-xs font-medium transition-colors ${
             isExporting || !filtered || filtered.length === 0
               ? 'bg-bg-hover text-text-muted cursor-not-allowed'
-              : 'bg-gold/10 border border-gold/50 text-gold hover:bg-gold/20'
+              : 'bg-terracotta/10 border border-terracotta/50 text-terracotta hover:bg-gold/20'
           }`}
           title={!filtered || filtered.length === 0 ? 'No data to export' : 'Export filtered transactions to CSV'}
         >

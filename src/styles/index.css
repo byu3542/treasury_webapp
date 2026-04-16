@@ -52,10 +52,10 @@
     @apply inline-flex items-center rounded-full px-2 py-0.5 font-mono text-2xs font-medium uppercase tracking-wider;
   }
   .badge-gold {
-    @apply badge bg-gold/15 text-gold;
+    @apply badge bg-terracotta/15 text-terracotta;
   }
   .badge-teal {
-    @apply badge bg-teal/15 text-teal;
+    @apply badge bg-terracotta/15 text-terracotta;
   }
   .badge-red {
     @apply badge bg-danger/15 text-danger;
@@ -72,7 +72,7 @@
     @apply inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 font-body text-sm font-medium transition-all disabled:cursor-not-allowed disabled:opacity-40;
   }
   .btn-primary {
-    @apply btn bg-gold text-bg-main hover:bg-gold-light active:bg-gold-dark;
+    @apply btn bg-terracotta text-bg-main hover:bg-terracotta-light active:bg-terracotta-dark;
   }
   .btn-ghost {
     @apply btn border border-bg-border bg-transparent text-text-secondary hover:border-text-muted hover:text-text-primary;
@@ -83,7 +83,7 @@
 
   /* Input */
   .input {
-    @apply w-full rounded-lg border border-bg-border bg-bg-surface px-3 py-2 font-mono text-sm text-text-primary placeholder-text-muted outline-none transition-colors focus:border-gold/60 focus:ring-1 focus:ring-gold/20;
+    @apply w-full rounded-lg border border-bg-border bg-bg-surface px-3 py-2 font-mono text-sm text-text-primary placeholder-text-muted outline-none transition-colors focus:border-terracotta/60 focus:ring-1 focus:ring-terracotta/20;
   }
 
   /* Select */
@@ -96,7 +96,7 @@
     @apply flex cursor-pointer items-center gap-3 rounded-lg border-l-2 border-l-transparent px-3 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-bg-hover hover:text-text-primary;
   }
   .nav-item.active {
-    @apply border-l-gold bg-gold/10 text-gold;
+    @apply border-l-terracotta bg-terracotta/10 text-terracotta;
   }
 
   /* Amount color utility */

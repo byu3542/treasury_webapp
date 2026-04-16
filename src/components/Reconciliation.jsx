@@ -26,8 +26,8 @@ function ReconciliationHeader({ healthScore, pendingCount, matchedValue, varianc
         <div className="rounded-lg border border-bg-border bg-bg-surface p-4">
           <div className="text-2xs uppercase tracking-widest text-text-muted mb-2">Reconciliation Health</div>
           <div className="flex items-baseline gap-2">
-            <div className="text-3xl font-bold text-gold">{healthScore}%</div>
-            <span className="text-xs text-teal">+1.4% vs prev week</span>
+            <div className="text-3xl font-bold text-terracotta">{healthScore}%</div>
+            <span className="text-xs text-terracotta">+1.4% vs prev week</span>
           </div>
         </div>
 
@@ -211,7 +211,7 @@ function IntelligenceBriefing({ anomalies, tips }) {
 
   return (
     <div className="rounded-lg border border-bg-border bg-bg-surface p-4 space-y-3">
-      <div className="text-sm font-semibold text-gold">INTELLIGENCE BRIEFING</div>
+      <div className="text-sm font-semibold text-terracotta">INTELLIGENCE BRIEFING</div>
 
       {/* Anomalies */}
       {anomalies && anomalies.length > 0 && (
