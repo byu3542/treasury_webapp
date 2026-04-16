@@ -1,48 +1,57 @@
 /**
  * SOVEREIGN ENTERPRISE TREASURY — Design System
+ * Inspired by Claude (Anthropic) — Warm, Editorial, Accessible
  * Complete color palette, spacing, typography, and component tokens
  */
 
 :root {
   /* ═══════════════════════════════════════════════════════════
-     BACKGROUNDS
+     BACKGROUNDS (CLAUDE-INSPIRED: Warm Parchment & Neutrals)
      ═══════════════════════════════════════════════════════════ */
-  --bg-primary: #0a1117;       /* Main page background (deepest navy) */
-  --bg-secondary: #0f1620;     /* Card, panel, section backgrounds */
-  --bg-tertiary: #151c28;      /* Hover states, elevated surfaces */
-  --bg-quaternary: #1a2332;    /* Nested panels, secondary surfaces */
+  --bg-parchment: #f5f4ed;     /* Primary page background (warm cream) */
+  --bg-ivory: #faf9f5;         /* Card surfaces, elevated elements (lightest) */
+  --bg-primary: #f5f4ed;       /* Main page background (parchment) */
+  --bg-secondary: #faf9f5;     /* Card, panel, section backgrounds */
+  --bg-tertiary: #ffffff;      /* Hover states, elevated surfaces (pure white) */
+  --bg-quaternary: #e8e6dc;    /* Nested panels, secondary surfaces (warm sand) */
+
+  /* Dark mode variants */
+  --bg-dark-primary: #141413;  /* Dark page background (warm near-black) */
+  --bg-dark-secondary: #30302e; /* Dark card backgrounds (warm charcoal) */
 
   /* ═══════════════════════════════════════════════════════════
-     BORDERS & DIVIDERS
+     BORDERS & DIVIDERS (Claude-inspired: Warm tones)
      ═══════════════════════════════════════════════════════════ */
-  --border-default: rgba(255, 255, 255, 0.08);
-  --border-hover: rgba(255, 255, 255, 0.12);
-  --border-active: rgba(255, 255, 255, 0.16);
+  --border-cream: #f0eee6;     /* Light border (barely visible warm) */
+  --border-warm: #e8e6dc;      /* Prominent border (warm sand tone) */
+  --border-dark: #30302e;      /* Dark border (warm charcoal) */
+  --border-default: #f0eee6;
+  --border-hover: #e8e6dc;
+  --border-active: #d1cfc5;
   --border-width: 1px;
   --border-width-thick: 2px;
 
   /* ═══════════════════════════════════════════════════════════
-     PRIMARY ACCENT — TEAL (Active, Selected, Focus, Primary Actions)
+     PRIMARY ACCENT — TERRACOTTA (Warm, Earthy, Brand)
      ═══════════════════════════════════════════════════════════ */
-  --teal-600: #06d6a0;
-  --teal-500: #14b8a6;
-  --teal-400: #2dd4bf;
-  --teal-300: #5ee7de;
-  --teal-bg: rgba(45, 212, 191, 0.1);
-  --teal-bg-hover: rgba(45, 212, 191, 0.15);
+  --terracotta-brand: #c96442;  /* Core brand color (warm burnt orange) */
+  --terracotta-light: #d97757;  /* Lighter variant for accents */
+  --terracotta-bg: rgba(201, 100, 66, 0.1);
+  --terracotta-bg-hover: rgba(201, 100, 66, 0.15);
 
   /* ═══════════════════════════════════════════════════════════
-     SECONDARY ACCENT — GOLD (Tertiary Actions, Secondary UI)
+     SEMANTIC & ACCENT COLORS (Claude-inspired)
      ═══════════════════════════════════════════════════════════ */
-  --gold-600: #d97706;
-  --gold-500: #f59e0b;
-  --gold-400: #fbbf24;
-  --gold-300: #fcd34d;
-  --gold-bg: rgba(251, 191, 36, 0.1);
-  --gold-bg-hover: rgba(251, 191, 36, 0.15);
+  /* Ring/Shadow colors (warm tones for interactive states) */
+  --ring-warm: #d1cfc5;        /* Ring shadow for button/card hover */
+  --ring-subtle: #dedc01;      /* Secondary ring for lighter surfaces */
+  --ring-deep: #c2c0b6;        /* Deeper ring for active/pressed states */
+
+  /* Focus color (only cool tone in system, for accessibility) */
+  --focus-blue: #3898ec;       /* Input focus rings */
 
   /* ═══════════════════════════════════════════════════════════
-     STATUS COLORS
+     STATUS COLORS (Semantic: Green, Red, Amber, Blue)
      ═══════════════════════════════════════════════════════════ */
   /* SUCCESS — Green (Settled, Inflow, Positive) */
   --green-success: #10b981;
@@ -50,11 +59,11 @@
   --green-bg: rgba(16, 185, 129, 0.1);
   --green-bg-hover: rgba(16, 185, 129, 0.15);
 
-  /* ERROR — Red (Outflow, Negative, Errors, Discrepancies) */
-  --red-error: #ef4444;
+  /* ERROR — Warm Red (Outflow, Negative, Errors) */
+  --red-error: #b53333;        /* Deep, warm red (not vibrant) */
   --red-light: #fca5a5;
-  --red-bg: rgba(239, 68, 68, 0.1);
-  --red-bg-hover: rgba(239, 68, 68, 0.15);
+  --red-bg: rgba(181, 51, 51, 0.1);
+  --red-bg-hover: rgba(181, 51, 51, 0.15);
 
   /* WARNING — Amber (Pending, Warnings, Review Needed) */
   --amber-warning: #f59e0b;
@@ -68,23 +77,28 @@
   --blue-bg: rgba(59, 130, 246, 0.1);
   --blue-bg-hover: rgba(59, 130, 246, 0.15);
 
-  /* GRAY — Neutral grays for disabled states */
-  --gray-500: #6b7280;
-  --gray-400: #9ca3af;
-  --gray-bg: rgba(107, 114, 128, 0.1);
+  /* NEUTRALS — Warm-toned grays for disabled/secondary states */
+  --gray-500: #87867f;         /* Stone Gray - tertiary text */
+  --gray-400: #a8b5c4;         /* Olive Gray - secondary text */
+  --gray-bg: rgba(135, 134, 127, 0.1);
 
   /* ═══════════════════════════════════════════════════════════
-     TEXT & TYPOGRAPHY
+     TEXT & TYPOGRAPHY (Claude-inspired: Warm neutrals + Serif)
      ═══════════════════════════════════════════════════════════ */
-  --text-primary: #f0f4f8;     /* Primary text, headings, emphasis */
-  --text-secondary: #a8b5c4;   /* Secondary text, descriptions, labels */
-  --text-tertiary: #697a8f;    /* Tertiary/muted text, metadata */
-  --text-disabled: #5a6a7a;    /* Disabled text, inactive states */
-  --text-inverse: #0a1117;     /* Text on light backgrounds */
+  /* Light mode text colors */
+  --text-primary: #141413;     /* Anthropic Near Black - primary text/headings */
+  --text-secondary: #5e5d59;   /* Olive Gray - secondary text, descriptions */
+  --text-tertiary: #87867f;    /* Stone Gray - tertiary/muted text, metadata */
+  --text-disabled: #b0aea5;    /* Warm Silver - disabled text, inactive states */
+  --text-inverse: #faf9f5;     /* Ivory - text on dark backgrounds */
 
-  /* Typography families */
-  --font-family-heading: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-family-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  /* Dark mode text colors */
+  --text-dark-primary: #faf9f5; /* Ivory - primary text on dark */
+  --text-dark-secondary: #b0aea5; /* Warm Silver - secondary on dark */
+
+  /* Typography families (Claude-inspired) */
+  --font-family-heading: Georgia, "Anthropic Serif", serif; /* Serif for headlines */
+  --font-family-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; /* Sans for body/UI */
   --font-family-mono: "IBM Plex Mono", "Courier New", monospace;
 
   /* ═══════════════════════════════════════════════════════════
@@ -108,23 +122,34 @@
   --content-max-width: 1440px;
 
   /* ═══════════════════════════════════════════════════════════
-     BORDER RADIUS
+     BORDER RADIUS (Claude-inspired: Soft, approachable)
      ═══════════════════════════════════════════════════════════ */
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
-  --radius-2xl: 16px;
-  --radius-full: 9999px;
+  --radius-sharp: 4px;         /* Minimal inline elements */
+  --radius-sm: 6px;            /* Small buttons, secondary interactive */
+  --radius-md: 8px;            /* Standard buttons, cards, containers */
+  --radius-lg: 12px;           /* Primary buttons, input fields, nav */
+  --radius-xl: 16px;           /* Featured containers, video players */
+  --radius-2xl: 24px;          /* Tag-like elements, highlighted containers */
+  --radius-full: 32px;         /* Hero containers, embedded media */
+  --radius-circle: 9999px;
 
   /* ═══════════════════════════════════════════════════════════
-     SHADOWS & ELEVATION
+     SHADOWS & ELEVATION (Claude-inspired: Ring-based + Whisper)
      ═══════════════════════════════════════════════════════════ */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
-  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.2);
+  /* Ring shadows (interactive states, borders-as-shadows) */
+  --shadow-ring: 0px 0px 0px 1px;    /* Standard ring for interactive elements */
+  --shadow-ring-warm: 0px 0px 0px 1px #d1cfc5; /* Ring on light surfaces */
+  --shadow-ring-dark: 0px 0px 0px 1px #30302e; /* Ring on dark surfaces */
+
+  /* Whisper shadows (very subtle elevation) */
+  --shadow-whisper: rgba(0, 0, 0, 0.05) 0px 4px 24px;
+
+  /* Legacy shadows (fallback for existing components) */
+  --shadow-sm: rgba(0, 0, 0, 0.04) 0px 1px 2px;
+  --shadow-md: rgba(0, 0, 0, 0.06) 0px 2px 8px;
+  --shadow-lg: rgba(0, 0, 0, 0.08) 0px 4px 12px;
+  --shadow-xl: rgba(0, 0, 0, 0.1) 0px 8px 16px;
+  --shadow-2xl: rgba(0, 0, 0, 0.12) 0px 12px 24px;
 
   /* ═══════════════════════════════════════════════════════════
      TRANSITIONS & ANIMATIONS
@@ -134,45 +159,85 @@
   --transition-slow: 0.3s ease-in-out;
 
   /* ═══════════════════════════════════════════════════════════
-     TYPOGRAPHY SCALE
+     TYPOGRAPHY SCALE (Claude-inspired: Serif headers, generous line-height)
      ═══════════════════════════════════════════════════════════ */
-  /* Headings */
-  --text-h1-size: 36px;
-  --text-h1-weight: 600;
-  --text-h1-line: 1.1;
-  --text-h1-letter: -0.5px;
+  /* Display / Hero — Serif */
+  --text-h1-size: 64px;
+  --text-h1-weight: 500;
+  --text-h1-line: 1.10;
+  --text-h1-letter: 0px;
 
-  --text-h2-size: 28px;
-  --text-h2-weight: 600;
-  --text-h2-line: 1.2;
-  --text-h2-letter: -0.3px;
+  /* Section Heading — Serif */
+  --text-h2-size: 52px;
+  --text-h2-weight: 500;
+  --text-h2-line: 1.20;
+  --text-h2-letter: 0px;
 
-  --text-h3-size: 20px;
-  --text-h3-weight: 600;
-  --text-h3-line: 1.3;
+  /* Sub-heading Large — Serif */
+  --text-h3-size: 36px;
+  --text-h3-weight: 500;
+  --text-h3-line: 1.30;
   --text-h3-letter: 0px;
 
-  /* Body text */
-  --text-lg-size: 16px;
+  /* Sub-heading — Serif */
+  --text-h4-size: 32px;
+  --text-h4-weight: 500;
+  --text-h4-line: 1.10;
+  --text-h4-letter: 0px;
+
+  /* Feature Title — Serif */
+  --text-h5-size: 20.8px;
+  --text-h5-weight: 500;
+  --text-h5-line: 1.20;
+  --text-h5-letter: 0px;
+
+  /* Body Large — Sans (intro paragraphs) */
+  --text-lg-size: 20px;
   --text-lg-weight: 400;
-  --text-lg-line: 1.5;
+  --text-lg-line: 1.60;
+  --text-lg-letter: 0px;
 
-  --text-base-size: 14px;
+  /* Body / Nav — Sans (standard UI text) */
+  --text-base-size: 17px;
   --text-base-weight: 400;
-  --text-base-line: 1.5;
+  --text-base-line: 1.60;
+  --text-base-letter: 0px;
 
-  --text-sm-size: 12px;
+  /* Body Standard — Sans */
+  --text-sm-size: 16px;
   --text-sm-weight: 400;
-  --text-sm-line: 1.4;
+  --text-sm-line: 1.25;
+  --text-sm-letter: 0px;
 
-  --text-xs-size: 11px;
-  --text-xs-weight: 500;
-  --text-xs-line: 1.3;
+  /* Body Small — Sans */
+  --text-xs-size: 15px;
+  --text-xs-weight: 400;
+  --text-xs-line: 1.60;
+  --text-xs-letter: 0px;
+
+  /* Caption — Sans */
+  --text-caption-size: 14px;
+  --text-caption-weight: 400;
+  --text-caption-line: 1.43;
+  --text-caption-letter: 0px;
+
+  /* Label — Sans (with letter spacing) */
+  --text-label-size: 12px;
+  --text-label-weight: 500;
+  --text-label-line: 1.25;
+  --text-label-letter: 0.12px;
+
+  /* Overline — Sans (uppercase) */
+  --text-overline-size: 10px;
+  --text-overline-weight: 400;
+  --text-overline-line: 1.60;
+  --text-overline-letter: 0.5px;
 
   /* Monospace (for codes, IDs, amounts) */
-  --text-mono-size: 12px;
-  --text-mono-weight: 500;
-  --text-mono-line: 1.4;
+  --text-mono-size: 15px;
+  --text-mono-weight: 400;
+  --text-mono-line: 1.60;
+  --text-mono-letter: -0.32px;
 
   /* ═══════════════════════════════════════════════════════════
      Z-INDEX SCALE

@@ -125,8 +125,8 @@ function CategoryTrends({ transactions }) {
     return { top5, sortedMonths, months }
   }, [transactions])
 
-  const colors = ['text-gold', 'text-teal', 'text-danger', 'text-success', 'text-warning']
-  const bgColors = ['bg-gold', 'bg-teal', 'bg-danger', 'bg-success', 'bg-warning']
+  const colors = ['text-terracotta', 'text-terracotta', 'text-danger', 'text-success', 'text-warning']
+  const bgColors = ['bg-terracotta', 'bg-terracotta', 'bg-danger', 'bg-success', 'bg-warning']
 
   if (!data.top5.length) return <p className="text-xs text-text-muted">No category data</p>
 
@@ -191,7 +191,7 @@ function ReconciliationStats({ transactions }) {
       </div>
       <div className="h-2 w-full overflow-hidden rounded-full bg-bg-hover">
         <div
-          className="h-full rounded-full bg-teal transition-all"
+          className="h-full rounded-full bg-terracotta transition-all"
           style={{ width: `${rate}%` }}
         />
       </div>
@@ -292,7 +292,7 @@ export default function Analytics() {
           </div>
           <div className="card text-center">
             <p className="font-mono text-2xs uppercase tracking-widest text-text-muted">Net Position</p>
-            <p className={`mt-1 font-mono text-xl font-medium ${summary.net >= 0 ? 'text-teal' : 'text-danger'}`}>
+            <p className={`mt-1 font-mono text-xl font-medium ${summary.net >= 0 ? 'text-terracotta' : 'text-danger'}`}>
               {fmt(summary.net)}
             </p>
           </div>
