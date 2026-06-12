@@ -81,7 +81,7 @@
 .error-button:hover {
   background-color: var(--teal-500);
   border-color: var(--teal-500);
-  box-shadow: 0 4px 12px rgba(45, 212, 191, 0.2);
+  box-shadow: 0 4px 12px rgba(201, 100, 66, 0.2);
 }
 
 .error-button:active {

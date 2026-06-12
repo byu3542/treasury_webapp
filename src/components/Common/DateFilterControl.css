@@ -104,7 +104,7 @@
 .date-input-group input:focus {
   outline: none;
   border-color: var(--teal-400);
-  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.1);
+  box-shadow: 0 0 0 3px rgba(201, 100, 66, 0.12);
 }
 
 .custom-actions {

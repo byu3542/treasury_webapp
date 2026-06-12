@@ -34,6 +34,12 @@ export default {
         danger: '#b53333',        /* Warm red error */
         success: '#10b981',       /* Green success */
         warning: '#f59e0b',       /* Amber warning */
+        /* Legacy Sovereign-theme aliases -> terracotta (used in Reconciliation) */
+        teal: {
+          DEFAULT: '#c96442',
+          dim: 'rgba(201, 100, 66, 0.1)',
+        },
+        'red-dim': 'rgba(181, 51, 51, 0.1)',
       },
       fontFamily: {
         headline: ['Georgia', 'serif'],  /* Claude: Serif for headings */

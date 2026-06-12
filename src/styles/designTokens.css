@@ -38,6 +38,18 @@
   --terracotta-light: #d97757;  /* Lighter variant for accents */
   --terracotta-bg: rgba(201, 100, 66, 0.1);
   --terracotta-bg-hover: rgba(201, 100, 66, 0.15);
+  --terracotta-dark: #a84f33;   /* Darker terracotta for hover states */
+  --terracotta-darker: #8f4329; /* Darkest terracotta for active/pressed */
+
+  /* ── Legacy token aliases (Sovereign theme → Claude redesign) ──
+     The 3aeeb0e redesign deleted the teal/gold tokens but many
+     stylesheets still reference them. These aliases keep every
+     legacy reference rendering in the new terracotta palette. */
+  --teal-400: var(--terracotta-brand);
+  --teal-500: var(--terracotta-dark);
+  --teal-600: var(--terracotta-darker);
+  --gold-500: var(--terracotta-brand);
+  --gold-600: var(--terracotta-dark);
 
   /* ═══════════════════════════════════════════════════════════
      SEMANTIC & ACCENT COLORS (Claude-inspired)

@@ -318,7 +318,7 @@ export default function TransactionTable() {
           className={`btn px-3 py-1.5 font-mono text-xs font-medium transition-colors ${
             isExporting || !filtered || filtered.length === 0
               ? 'bg-bg-hover text-text-muted cursor-not-allowed'
-              : 'bg-terracotta/10 border border-terracotta/50 text-terracotta hover:bg-gold/20'
+              : 'bg-terracotta/10 border border-terracotta/50 text-terracotta hover:bg-terracotta/20'
           }`}
           title={!filtered || filtered.length === 0 ? 'No data to export' : 'Export filtered transactions to CSV'}
         >
