@@ -24,15 +24,9 @@ export default function Dashboard() {
   const { selectedRange, startDate, endDate, handleRangeChange, getMinDateFromTransactions } = useDateFilter('last30', transactions)
   const [showNewTxnModal, setShowNewTxnModal] = useState(false)
 
-  if (!isAuthed || !config) {
-    return (
-      <div className="dashboard-placeholder">
-        <p>Configure Google Sheets and sign in to view dashboard.</p>
-      </div>
-    )
-  }
-
   // ✅ Filter transactions by selected date range
+  // All hooks must run on every render (Rules of Hooks) — keep them above
+  // the early return below, or React throws minified error #310.
   const filteredTransactions = useMemo(() => {
     if (!transactions || !startDate || !endDate) return transactions || []
 
@@ -45,6 +39,14 @@ export default function Dashboard() {
   // ✅ Calculate KPIs from filtered transactions
   const dashboardData = useDashboardData(filteredTransactions, 5 * 60 * 1000) // 5 min sync
   const { kpis, syncStatus, triggerSync } = dashboardData
+
+  if (!isAuthed || !config) {
+    return (
+      <div className="dashboard-placeholder">
+        <p>Configure Google Sheets and sign in to view dashboard.</p>
+      </div>
+    )
+  }
 
   return (
     <div className="dashboard">
