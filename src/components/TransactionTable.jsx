@@ -139,7 +139,7 @@ function TxRow({ index, style, data }) {
   return (
     <div
       style={style}
-      className={`tx-row px-3 ${isCleared ? 'reconciled' : ''}`}
+      className={`tx-row flex items-center px-3 ${isCleared ? 'reconciled' : ''}`}
     >
       {/* Reconcile checkbox */}
       <div className="w-5 flex-shrink-0">

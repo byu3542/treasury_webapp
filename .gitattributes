@@ -1,0 +1,30 @@
+# Normalize all text files to LF in the repository.
+# Git auto-detects text vs binary; text files are stored with LF
+# and checked out with LF, eliminating CRLF/LF phantom diffs.
+* text=auto eol=lf
+
+# Be explicit for the file types in this project
+*.js    text eol=lf
+*.jsx   text eol=lf
+*.ts    text eol=lf
+*.tsx   text eol=lf
+*.json  text eol=lf
+*.css   text eol=lf
+*.scss  text eol=lf
+*.html  text eol=lf
+*.md    text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.svg   text eol=lf
+
+# Treat these as binary (never normalize)
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.webp  binary
+*.woff  binary
+*.woff2 binary
+*.ttf   binary
+*.eot   binary
