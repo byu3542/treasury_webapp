@@ -17,8 +17,8 @@ function fmt(n) {
 
 function KpiCard({ label, value, sub, accent }) {
   const colorMap = {
-    gold: 'border-terracotta/30 text-terracotta',
-    teal: 'border-terracotta/30 text-terracotta',
+    gold: 'border-yellow-500/30 text-yellow-400',
+    teal: 'border-teal-500/30 text-teal-400',
     green: 'border-success/30 text-success',
     red: 'border-danger/30 text-danger',
     muted: 'border-bg-border text-text-secondary',
@@ -83,14 +83,14 @@ function RiskAlerts({ transactions }) {
   const alerts = []
   const now = Date.now()
 
-  for (const tx of transactions) {
-    // Large transactions > $10k
-    if (Math.abs(tx.amount) > 10_000) {
-      alerts.push({
-        level: 'warn',
-        msg: `Large transaction: ${fmt(tx.amount)} — ${tx.description?.slice(0, 40)}`,
-      })
-    }
+  // Large transactions > $10k — grouped into a single summary alert
+  const largeTxns = transactions.filter((tx) => Math.abs(tx.amount) > 10_000)
+  if (largeTxns.length > 0) {
+    const totalLarge = largeTxns.reduce((s, tx) => s + Math.abs(tx.amount), 0)
+    alerts.push({
+      level: 'warn',
+      msg: `${largeTxns.length} large transaction${largeTxns.length > 1 ? 's' : ''} >$10k (${fmt(totalLarge)} total)`,
+    })
   }
 
   // Pending reconciliation older than 30 days
@@ -195,7 +195,7 @@ function WeeklyCashFlow({ transactions }) {
 
 export default function Dashboard() {
   const { isAuthed, config } = useAuth()
-  const { transactions, isLoadingCache, isSyncing, syncError, sync, autoSync } = useTransactions(config, isAuthed)
+  const { transactions, isLoadingCache, isSyncing, syncError, sync } = useTransactions(config, isAuthed)
   const { filtered, datePreset, setDatePreset, filters, updateFilter } = useFilters(transactions)
   const { byAccount, byCategory, summary } = useAggregates(filtered)
   const [rowCount, setRowCount] = useState(null)
@@ -203,9 +203,6 @@ export default function Dashboard() {
   useEffect(() => {
     getMeta('rowCount').then((n) => n && setRowCount(n))
   }, [transactions.length])
-
-  // Trigger auto-sync if needed
-  useEffect(() => { autoSync() }, [isAuthed])
 
   if (!config) {
     return (
@@ -284,7 +281,7 @@ export default function Dashboard() {
           label="Net Cash"
           value={summary ? fmt(summary.net) : '—'}
           sub={rowCount ? `${Number(rowCount).toLocaleString()} transactions` : undefined}
-          accent={summary?.net >= 0 ? 'teal' : 'red'}
+          accent={summary?.net >= 0 ? 'green' : 'red'}
         />
         <KpiCard
           label="Total Inflows"

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useCallback, useRef } from 'react'
+import { useCallback, useMemo, useRef } from 'react'
 import { fetchAllTransactions } from '../services/sheets.js'
 import {
   getAllTransactions,
@@ -103,41 +103,43 @@ export function useTransactions(config, isAuthed) {
  * cash position by account, category totals, cash flow summary.
  */
 export function useAggregates(transactions) {
-  if (!transactions.length) {
-    return { byAccount: [], byCategory: [], summary: null }
-  }
-
-  // By account
-  const accountMap = new Map()
-  for (const tx of transactions) {
-    const key = tx.account || 'Unknown'
-    if (!accountMap.has(key)) {
-      accountMap.set(key, { account: key, institution: tx.institution || '', balance: 0, count: 0 })
+  return useMemo(() => {
+    if (!transactions.length) {
+      return { byAccount: [], byCategory: [], summary: null }
     }
-    const a = accountMap.get(key)
-    a.balance += tx.amount
-    a.count++
-  }
-  const byAccount = [...accountMap.values()].sort((a, b) => b.balance - a.balance)
 
-  // By category
-  const catMap = new Map()
-  for (const tx of transactions) {
-    const key = tx.category || 'Uncategorized'
-    if (!catMap.has(key)) catMap.set(key, { category: key, total: 0, count: 0 })
-    const c = catMap.get(key)
-    c.total += tx.amount
-    c.count++
-  }
-  const byCategory = [...catMap.values()].sort((a, b) => a.total - b.total)
+    // By account
+    const accountMap = new Map()
+    for (const tx of transactions) {
+      const key = tx.account || 'Unknown'
+      if (!accountMap.has(key)) {
+        accountMap.set(key, { account: key, institution: tx.institution || '', balance: 0, count: 0 })
+      }
+      const a = accountMap.get(key)
+      a.balance += tx.amount
+      a.count++
+    }
+    const byAccount = [...accountMap.values()].sort((a, b) => b.balance - a.balance)
 
-  // Summary
-  const inflows = transactions.filter((t) => t.amount > 0).reduce((s, t) => s + t.amount, 0)
-  const outflows = transactions.filter((t) => t.amount < 0).reduce((s, t) => s + t.amount, 0)
+    // By category
+    const catMap = new Map()
+    for (const tx of transactions) {
+      const key = tx.category || 'Uncategorized'
+      if (!catMap.has(key)) catMap.set(key, { category: key, total: 0, count: 0 })
+      const c = catMap.get(key)
+      c.total += tx.amount
+      c.count++
+    }
+    const byCategory = [...catMap.values()].sort((a, b) => a.total - b.total)
 
-  return {
-    byAccount,
-    byCategory,
-    summary: { inflows, outflows, net: inflows + outflows, count: transactions.length },
-  }
+    // Summary
+    const inflows = transactions.filter((t) => t.amount > 0).reduce((s, t) => s + t.amount, 0)
+    const outflows = transactions.filter((t) => t.amount < 0).reduce((s, t) => s + t.amount, 0)
+
+    return {
+      byAccount,
+      byCategory,
+      summary: { inflows, outflows, net: inflows + outflows, count: transactions.length },
+    }
+  }, [transactions])
 }
